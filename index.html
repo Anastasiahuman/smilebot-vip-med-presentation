@@ -160,11 +160,13 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
 
 /* timeline */
 .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%;position:relative}
-.tl::before{content:'';position:absolute;top:43px;left:12.5%;right:12.5%;height:2px;
-  background:var(--mint);box-shadow:0 0 12px rgba(0,229,160,.5);z-index:0}
 .ti{display:flex;flex-direction:column;align-items:center;padding:0 10px}
+.tl-node{position:relative;display:flex;justify-content:center;width:100%;margin-bottom:14px}
+.ti:not(:last-child) .tl-node::after{content:'';position:absolute;top:50%;left:calc(50% + 21px);
+  width:calc(100% - 42px);height:2px;transform:translateY(-50%);
+  background:var(--mint);box-shadow:0 0 12px rgba(0,168,112,.45);z-index:0;pointer-events:none}
 .td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1;
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;position:relative;z-index:1;
   background:var(--card)}
 .td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
 .tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
@@ -231,7 +233,7 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
   .ig{grid-template-columns:1fr;gap:12px}
   .icenter{flex-direction:row;justify-content:center;padding:8px 0}
   .tl{grid-template-columns:1fr 1fr;gap:20px}
-  .tl::before{display:none}
+  .ti:not(:last-child) .tl-node::after{display:none}
   .slide-s1-grid{grid-template-columns:1fr!important;gap:28px!important}
   .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
   .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -787,7 +789,6 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
 <!-- SLIDE 12 · ROI -->
 <!-- ══════════════════════════════════════════════════════ -->
 <section class="slide" id="s12">
-<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:500;display:none"></canvas>
 <div class="inner" style="max-width:1200px">
   <div class="ey">Каждая строка — открытая формула. Можно проверить.</div>
   <h2 class="h2" style="margin-bottom:16px">Возврат <span class="am">инвестиций</span></h2>
@@ -963,8 +964,6 @@ const REVENUE_SLIDE = 5;
 let cur = 1;
 const chartStore = {};
 let roiHoverBound = false;
-let confettiFrame = null;
-let confettiTimer = null;
 
 const chartAnim = {
   duration: 1100,
@@ -1021,7 +1020,6 @@ function updateUI() {
   document.getElementById('prog').style.width = ((cur / total) * 100) + '%';
   document.getElementById('ctr').textContent =
     String(cur).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
-  if (cur !== ROI_SLIDE) stopConfetti();
   initSlideMotion(cur);
 }
 
@@ -1050,73 +1048,6 @@ document.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - tx;
   if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
 });
-
-function stopConfetti() {
-  if (confettiFrame) cancelAnimationFrame(confettiFrame);
-  confettiFrame = null;
-  if (confettiTimer) clearTimeout(confettiTimer);
-  confettiTimer = null;
-  const canvas = document.getElementById('confettiCanvas');
-  if (!canvas) return;
-  canvas.style.display = 'none';
-  const ctx = canvas.getContext('2d');
-  if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function launchConfetti() {
-  if (cur !== ROI_SLIDE) return;
-  stopConfetti();
-  const canvas = document.getElementById('confettiCanvas');
-  if (!canvas) return;
-  canvas.style.display = 'block';
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const ctx = canvas.getContext('2d');
-  const symbols = ['₽', '₽', '₽', '₽', '💰', '💵', '🪙', '💸'];
-  const colors = ['#00E5A0', '#FFD700', '#5B8AF0', '#fff', '#FF9E2C', '#00E5A0'];
-  const pts = Array.from({ length: 90 }, () => ({
-    x: Math.random() * canvas.width,
-    y: -Math.random() * canvas.height * 0.6,
-    vx: (Math.random() - 0.5) * 4,
-    vy: 2.5 + Math.random() * 4,
-    sym: symbols[Math.floor(Math.random() * symbols.length)],
-    sz: 16 + Math.random() * 22,
-    rot: Math.random() * Math.PI * 2,
-    rv: (Math.random() - 0.5) * 0.18,
-    op: 0.85 + Math.random() * 0.15,
-    col: colors[Math.floor(Math.random() * colors.length)]
-  }));
-  let f = 0;
-  const max = 220;
-  function tick() {
-    if (f >= max || cur !== ROI_SLIDE) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      canvas.style.display = 'none';
-      confettiFrame = null;
-      return;
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    pts.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.rv;
-      if (f > max - 70) p.op = Math.max(0, p.op - 0.012);
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      ctx.globalAlpha = p.op;
-      ctx.fillStyle = p.col;
-      ctx.font = `${p.sz}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(p.sym, 0, 0);
-      ctx.restore();
-    });
-    f++;
-    confettiFrame = requestAnimationFrame(tick);
-  }
-  tick();
-}
 
 function bindRoiHover() {
   if (roiHoverBound) return;
@@ -1260,10 +1191,7 @@ function initSlideMotion(n) {
     if (el) animateCount(el, +el.dataset.target);
   }
   if (n === COMPARE_SLIDE) setTimeout(buildCompareChart, 280);
-  if (n === ROI_SLIDE) {
-    setTimeout(buildRoiChart, 280);
-    confettiTimer = setTimeout(launchConfetti, 500);
-  }
+  if (n === ROI_SLIDE) setTimeout(buildRoiChart, 280);
 }
 
 Chart.defaults.color = '#666';
