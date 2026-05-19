@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>СмайлБот · Финальный расчёт · ВИП-МЕД</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,9 +19,9 @@
   --gb:0 8px 32px rgba(61,111,212,.14);
   --ga:0 8px 32px rgba(217,119,6,.12);
   --chart-grid:rgba(15,23,42,.06);
-  --inner-max:960px;--slide-pad-y:56px;--slide-pad-x:72px;--content-zoom:1.22;
+  --inner-max:960px;--slide-pad-y:56px;--slide-pad-x:72px;
 }
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--w);
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:var(--w);
   font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased}
 
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.4;
@@ -69,7 +69,7 @@ body:hover .nb{opacity:1}
 .h2{font-size:clamp(34px,4.2vw,64px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
 .h3{font-size:clamp(18px,2.3vw,30px);font-weight:700;line-height:1.2}
 .sub{font-size:clamp(15px,1.6vw,20px);color:var(--g1);line-height:1.6}
-a.contact-link{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,168,112,.35);
+a.contact-link{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,229,160,.35);
   transition:color .2s,border-color .2s}
 a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 .am{color:var(--mint)}.ab{color:var(--blue)}.aa{color:var(--amber)}.ar{color:var(--red)}
@@ -87,16 +87,16 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 /* badge */
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;
   font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em}
-.b-a{background:rgba(61,111,212,.12);color:var(--blue);border:1px solid rgba(61,111,212,.25)}
-.b-b{background:rgba(0,168,112,.12);color:var(--mint);border:1px solid rgba(0,168,112,.25)}
+.b-a{background:rgba(91,138,240,.12);color:var(--blue);border:1px solid rgba(91,138,240,.25)}
+.b-b{background:rgba(0,229,160,.12);color:var(--mint);border:1px solid rgba(0,229,160,.25)}
 .b-w{background:rgba(255,158,44,.12);color:var(--amber);border:1px solid rgba(255,158,44,.25)}
 .b-r{background:rgba(255,85,85,.12);color:var(--red);border:1px solid rgba(255,85,85,.25)}
 
 /* stat pills */
 .pill{display:inline-flex;align-items:center;padding:5px 13px;border-radius:100px;
   font-family:'Space Mono',monospace;font-size:13px;font-weight:700}
-.pu{background:rgba(0,168,112,.1);color:var(--mint)}
-.pb{background:rgba(61,111,212,.1);color:var(--blue)}
+.pu{background:rgba(0,229,160,.1);color:var(--mint)}
+.pb{background:rgba(91,138,240,.1);color:var(--blue)}
 
 /* big number */
 .bn{font-family:'Space Mono',monospace;font-weight:700;letter-spacing:-.03em;line-height:1}
@@ -120,7 +120,13 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}
-.inner{width:100%;max-width:var(--inner-max);zoom:var(--content-zoom)}
+.inner{width:100%;max-width:var(--inner-max);min-width:0}
+.card,.mc,.agent{min-width:0}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%}
+.grid-3--center{max-width:780px;margin:0 auto;text-align:left}
+.grid-2x2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ct-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ct-scroll .ct{min-width:320px}
 
 /* chart reveal */
 .chart-wrap{opacity:0;transform:translateY(20px) scale(.98);
@@ -148,11 +154,11 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 /* timeline */
 .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%;position:relative}
 .tl::before{content:'';position:absolute;top:20px;left:12.5%;right:12.5%;height:2px;
-  background:var(--mint);box-shadow:0 0 12px rgba(0,168,112,.5)}
+  background:var(--mint);box-shadow:0 0 12px rgba(0,229,160,.5)}
 .ti{display:flex;flex-direction:column;align-items:center;padding:0 10px}
 .td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1}
-.td.on,.td.off{background:rgba(0,168,112,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
+.td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
 .tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
   text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;text-align:center}
 .ttit{font-size:17px;font-weight:700;margin-bottom:6px;text-align:center}
@@ -167,8 +173,8 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 .idot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .icenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .ilogo{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--mint);
-  padding:8px 12px;border:1px solid rgba(0,168,112,.3);border-radius:8px;
-  background:rgba(0,168,112,.05);box-shadow:var(--gm);text-align:center;white-space:nowrap}
+  padding:8px 12px;border:1px solid rgba(0,229,160,.3);border-radius:8px;
+  background:rgba(0,229,160,.05);box-shadow:var(--gm);text-align:center;white-space:nowrap}
 
 /* priorities slide */
 .prio-num{font-family:'Space Mono',monospace;font-weight:700;line-height:1;flex-shrink:0;color:var(--mint);opacity:.35}
@@ -176,8 +182,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 .prio-247{font-family:'Space Mono',monospace;font-size:1.45em;font-weight:800;color:var(--blue);letter-spacing:.03em}
 
 /* agents ecosystem */
-.inner.slide-ecosystem{zoom:1;max-width:1100px}
-.slide-ecosystem.active{overflow-y:auto;justify-content:flex-start;padding-top:48px;padding-bottom:48px}
+.inner.slide-ecosystem{max-width:1100px}
 .agents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-bottom:16px}
 .agent{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
   box-shadow:0 2px 12px rgba(15,23,42,.04);min-width:0}
@@ -195,45 +200,56 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
   color:var(--mint);text-transform:uppercase;margin-bottom:8px}
 .privacy-box p{font-size:14px;color:var(--g1);line-height:1.55;margin:0}
 
-/* ноутбук 1024–1439 */
-@media(min-width:1024px) and (max-width:1439px){
-  :root{--inner-max:900px;--slide-pad-y:48px;--slide-pad-x:56px;--content-zoom:1.12}
-  #logo{left:28px}
-  #ctr{right:28px}
-  #bp{left:12px}#bn{right:12px}
-  .slide-s1-grid{gap:48px!important}
-}
-/* планшет 768–1023 */
-@media(min-width:768px) and (max-width:1023px){
-  :root{--inner-max:680px;--slide-pad-y:36px;--slide-pad-x:40px;--content-zoom:1}
-  #logo{top:18px;left:24px;font-size:9px}
-  #ctr{bottom:18px;right:24px;font-size:9px}
-  #bp{left:10px}#bn{right:10px}
-  .nb{width:40px;height:40px}
-  .slide.active{overflow-y:auto;justify-content:flex-start;padding-top:52px;padding-bottom:52px}
-  .g2,.g3,.g4{grid-template-columns:1fr}
+/* iPad / планшет и узкий ноутбук — прокрутка слайдов, без zoom */
+@media(max-width:1366px){
+  :root{--slide-pad-y:40px;--slide-pad-x:36px;--inner-max:min(920px,calc(100vw - 72px))}
+  #logo{top:max(18px,env(safe-area-inset-top));left:max(20px,env(safe-area-inset-left))}
+  #ctr{bottom:max(18px,env(safe-area-inset-bottom));right:max(20px,env(safe-area-inset-right))}
+  .slide.active{
+    overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    justify-content:flex-start;align-items:center;
+    padding-top:max(52px,env(safe-area-inset-top));
+    padding-bottom:max(56px,env(safe-area-inset-bottom));
+  }
+  .slide-ecosystem.active{padding-top:max(44px,env(safe-area-inset-top));padding-bottom:max(44px,env(safe-area-inset-bottom))}
+  .h1{font-size:clamp(36px,7vw,64px)}
+  .h2{font-size:clamp(28px,5.5vw,48px)}
+  .h3{font-size:clamp(17px,2.8vw,26px)}
+  .mv,.bn,.ct td.va,.ct td.vb,.pill{white-space:normal;word-break:break-word}
+  .ilogo{white-space:normal;text-align:center}
+  .grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-2x2{grid-template-columns:1fr}
+  .g2,.g3,.g4,.slide-s9-grid{grid-template-columns:1fr!important}
   .ig{grid-template-columns:1fr;gap:12px}
   .icenter{flex-direction:row;justify-content:center;padding:8px 0}
   .tl{grid-template-columns:1fr 1fr;gap:20px}
   .tl::before{display:none}
   .slide-s1-grid{grid-template-columns:1fr!important;gap:28px!important}
-  .slide-s9-grid{grid-template-columns:1fr!important}
   .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
+  .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
   #wrapCompare{height:200px!important}
   #wrapRoi{height:130px!important}
-  .agents{grid-template-columns:1fr 1fr}
 }
-/* узкий экран */
+/* ноутбук 1024–1439 (мышь) */
+@media(min-width:1024px) and (max-width:1439px){
+  #bp{left:12px}#bn{right:12px}
+  .slide-s1-grid{gap:40px!important}
+}
+/* планшет портрет 768–1023 */
+@media(min-width:768px) and (max-width:1023px){
+  :root{--inner-max:min(680px,calc(100vw - 64px));--slide-pad-x:32px}
+  #logo{font-size:9px}
+  #ctr{font-size:9px}
+  #bp{left:10px}#bn{right:10px}
+  .nb{width:40px;height:40px}
+}
+/* телефон */
 @media(max-width:767px){
-  :root{--inner-max:100%;--slide-pad-y:28px;--slide-pad-x:24px;--content-zoom:.95}
-  .slide.active{overflow-y:auto;justify-content:flex-start;padding-top:44px}
-  .g2,.g3,.g4{grid-template-columns:1fr}
-  .ig{grid-template-columns:1fr}
-  .tl{grid-template-columns:1fr}
-  .tl::before{display:none}
+  :root{--inner-max:100%;--slide-pad-y:28px;--slide-pad-x:max(20px,env(safe-area-inset-left))}
+  .h1{font-size:clamp(30px,9vw,44px)}
+  .h2{font-size:clamp(24px,7vw,36px)}
+  .grid-3,.agents,.tl{grid-template-columns:1fr}
   .slide-s1-grid{grid-template-columns:1fr!important}
-  .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
-  .agents{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -303,7 +319,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <div class="inner">
   <div class="ey">Исходные данные</div>
   <h2 class="h2" style="margin-bottom:28px">Что мы поняли из вашего <span class="am">ТЗ</span></h2>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+  <div class="grid-3">
     <div class="card">
       <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:8px">Масштаб</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5">40 100 пациентов · 70–80 врачей<br>15+ направлений · 150–200 чел/день</div>
@@ -320,7 +336,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--red);text-transform:uppercase;margin-bottom:8px">Текущая боль</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5">Админы перегружены звонками.<br>Недозагрузка расписания ~<strong class="ar">30%</strong></div>
     </div>
-    <div class="card" style="border-color:rgba(0,168,112,.15)">
+    <div class="card" style="border-color:rgba(0,229,160,.15)">
       <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--mint);text-transform:uppercase;margin-bottom:8px">Согласование</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5">Подписывает гендиректор.<br>1–2 часа в неделю на сопровождение пилота</div>
     </div>
@@ -355,9 +371,9 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       </div>
     </div>
     <div class="card" style="display:flex;gap:18px;align-items:flex-start">
-      <div class="prio-num prio-num--lg" style="color:var(--blue)">3</div>
+      <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--blue);opacity:.3;line-height:1;flex-shrink:0">3</div>
       <div>
-        <div class="h3" style="margin-bottom:8px;font-size:clamp(20px,2.5vw,32px)">Запись <span class="prio-247">24/7</span></div>
+        <div class="h3" style="margin-bottom:8px">Запись 24/7</div>
         <div style="font-size:13px;color:var(--g1);line-height:1.6">Прямо в Инфоклинику через API, без Google Sheets. Дополнительный поток обращений в нерабочее время через мессенджеры.</div>
       </div>
     </div>
@@ -365,7 +381,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--blue);opacity:.3;line-height:1;flex-shrink:0">4</div>
       <div>
         <div class="h3" style="margin-bottom:8px">Реактиватор спящих</div>
-        <div style="font-size:13px;color:var(--g1);line-height:1.6">Раз в квартал, для базы 40 100 — волнами по 2–3 тыс.</div>
+        <div style="font-size:13px;color:var(--g1);line-height:1.6">Раз в квартал, для базы 40 100 — волнами по 2–3 тыс. Можем включить в финальную версию, не основной приоритет сейчас.</div>
       </div>
     </div>
   </div>
@@ -375,14 +391,15 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 4 · ЭКОСИСТЕМА ИИ-АГЕНТОВ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s4">
+<section class="slide slide-ecosystem" id="s4">
 <div class="inner slide-ecosystem">
-  <div class="ey">Продукт СмайлБот</div>
+  <div class="ey">Продукт</div>
   <h2 class="h2" style="margin-bottom:10px">Экосистема <span class="am">ИИ-агентов</span></h2>
   <p class="sub" style="margin-bottom:22px;max-width:820px">
-    Не один чат-бот, а команда узких агентов на <strong>российских языковых моделях</strong>:
+    Не один чат-бот, а команда узких агентов на <strong style="color:var(--w)">российских языковых моделях</strong>:
     обработка и хранение данных в контуре РФ, без зарубежных облаков.
   </p>
+
   <div class="agents">
     <div class="agent agent--mint">
       <span class="agent-ico">Агент 01</span>
@@ -415,18 +432,18 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       <span class="agent-txt">Дашборд для руководства: загрузка, эффект по модулям, прогресс к KPI пилота.</span>
     </div>
   </div>
+
   <div class="privacy-box">
     <div class="ptit">Персональные данные</div>
     <p>
-      <strong>Персональные данные пациентов никуда не передаются</strong> за пределы согласованного контура:
+      <strong style="color:var(--w)">Персональные данные пациентов никуда не передаются</strong> за пределы согласованного контура:
       обработка только на серверах в России, соответствие 152-ФЗ, шифрование каналов связи.
-      Доступ к данным — только у клиники и СмайлБот по договору и NDA. Зарубежные ИИ-сервисы не используются.
+      Доступ к данным — только у клиники по договору и NDA. Зарубежные ИИ-сервисы не используются.
     </p>
   </div>
 </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 5 · ГЛАВНЫЙ ИНСАЙТ -->
 <!-- ══════════════════════════════════════════════════════ -->
 <section class="slide" id="s5">
@@ -438,14 +455,14 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 
   <div style="position:relative;padding:40px;margin-bottom:32px">
     <div style="font-size:clamp(11px,1.1vw,13px);font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:8px;letter-spacing:.1em">ДОПОЛНИТЕЛЬНАЯ ВЫРУЧКА / МЕС (КОНСЕРВАТИВНО)</div>
-    <div class="bn money" style="font-size:clamp(50px,6.5vw,92px);color:var(--mint);text-shadow:0 0 80px rgba(0,168,112,.4)">
+    <div class="bn money" style="font-size:clamp(50px,6.5vw,92px);color:var(--mint);text-shadow:0 0 80px rgba(0,229,160,.4)">
       <span class="money-val count-up" id="revenueCount" data-target="1500000">+0</span><span class="money-cur">₽</span>
     </div>
     <div style="font-size:14px;color:var(--g1);margin-top:8px">≈ 18 миллионов рублей в год · только с одного модуля</div>
-    <div style="position:absolute;inset:0;border-radius:20px;border:1px solid rgba(0,168,112,.1);pointer-events:none"></div>
+    <div style="position:absolute;inset:0;border-radius:20px;border:1px solid rgba(0,229,160,.1);pointer-events:none"></div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:left;max-width:780px;margin:0 auto">
+  <div class="grid-3 grid-3--center">
     <div class="mc">
       <div class="ml">Недозагрузка</div>
       <div class="mv">~50 слотов</div>
@@ -468,7 +485,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 5 · ОПЦИЯ А — ЧТО ВХОДИТ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s6">
+<section class="slide" id="s5">
 <div class="inner">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
     <span class="badge b-a">ОПЦИЯ А</span>
@@ -478,7 +495,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 
   <div class="g2" style="gap:28px;align-items:start">
     <div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div class="grid-2x2" style="margin-bottom:20px">
         <div class="mc gb">
           <div class="ml">Стоимость внедрения</div>
           <div class="mv ab">200 000 ₽</div>
@@ -511,7 +528,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 6 · ОПЦИЯ А — ОГРАНИЧЕНИЯ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s7">
+<section class="slide" id="s6">
 <div class="inner">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
     <span class="badge b-a">ОПЦИЯ А</span>
@@ -561,7 +578,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 7 · ОПЦИЯ Б — ПОЛНЫЙ ПИЛОТ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s8">
+<section class="slide" id="s7">
 <div class="inner">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
     <span class="badge b-b">ОПЦИЯ Б</span>
@@ -571,7 +588,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 
   <div class="g2" style="gap:28px;align-items:start">
     <div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div class="grid-2x2" style="margin-bottom:20px">
         <div class="mc gm">
           <div class="ml">Стоимость внедрения</div>
           <div class="mv am">550 000 ₽</div>
@@ -583,7 +600,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           <div class="ms">Окупаемость: <strong class="am">2–3 недели</strong></div>
         </div>
       </div>
-      <div style="font-size:13px;color:var(--g1);line-height:1.6;padding:16px;background:rgba(0,168,112,.04);border:1px solid rgba(0,168,112,.12);border-radius:10px">
+      <div style="font-size:13px;color:var(--g1);line-height:1.6;padding:16px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.12);border-radius:10px">
         Разница в цене с Опцией А — в 2,5 раза. Но эффект в 4–6 раз больше. Полный пилот даёт реалистичный KPI <strong class="am">+50% к потоку</strong>.
       </div>
     </div>
@@ -606,7 +623,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 8 · ИНТЕГРАЦИЯ С ИНФОКЛИНИКОЙ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s9">
+<section class="slide" id="s8">
 <div class="inner">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
     <span class="badge b-b">ОПЦИЯ Б</span>
@@ -628,7 +645,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
     <div class="icenter">
       <div class="ilogo">СМАЙЛ<br>БОТ</div>
       <svg width="24" height="40" viewBox="0 0 24 40" fill="none">
-        <path d="M12 0 L12 40" stroke="rgba(0,168,112,0.3)" stroke-width="1" stroke-dasharray="3 3"/>
+        <path d="M12 0 L12 40" stroke="rgba(0,229,160,0.3)" stroke-width="1" stroke-dasharray="3 3"/>
         <polyline points="6,10 12,2 18,10" stroke="var(--blue)" stroke-width="1.5" fill="none"/>
         <polyline points="6,30 12,38 18,30" stroke="var(--mint)" stroke-width="1.5" fill="none"/>
       </svg>
@@ -653,12 +670,12 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 9 · СРАВНЕНИЕ А И Б -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s10">
+<section class="slide" id="s9">
 <div class="inner">
   <div class="ey">Один взгляд — и понятно, что выбирать</div>
   <h2 class="h2" style="margin-bottom:24px">Сравнение <span class="ab">Опции А</span> и <span class="am">Опции Б</span></h2>
   <div class="g2 slide-s9-grid" style="gap:28px;align-items:start">
-    <div>
+    <div class="ct-scroll">
       <table class="ct">
         <thead>
           <tr>
@@ -684,7 +701,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
     <div style="display:flex;flex-direction:column;gap:12px">
       <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:4px">Месячный эффект, тыс. ₽</div>
       <div class="chart-wrap" id="wrapCompare" style="position:relative;height:240px"><canvas id="chartCompare"></canvas></div>
-      <div style="padding:14px;background:rgba(0,168,112,.05);border:1px solid rgba(0,168,112,.15);border-radius:10px">
+      <div style="padding:14px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.15);border-radius:10px">
         <div style="font-size:11px;font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:6px">ГЛАВНОЕ</div>
         <div style="font-size:13px;color:var(--g1);line-height:1.5">Разница в цене в <strong class="am">2,5 раза</strong> — эффект в <strong class="am">4–6 раз</strong> больше. Полный пилот даёт реалистичный KPI +50% к потоку.</div>
       </div>
@@ -696,7 +713,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 10 · ДОПУЩЕНИЯ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s11">
+<section class="slide" id="s10">
 <div class="inner">
   <div class="ey">Прозрачность модели</div>
   <h2 class="h2" style="margin-bottom:24px">Допущения <span class="am">расчёта</span></h2>
@@ -762,6 +779,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- SLIDE 12 · ROI -->
 <!-- ══════════════════════════════════════════════════════ -->
 <section class="slide" id="s12">
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:500;display:none"></canvas>
 <div class="inner" style="max-width:1200px">
   <div class="ey">Каждая строка — открытая формула. Можно проверить.</div>
   <h2 class="h2" style="margin-bottom:16px">Возврат <span class="am">инвестиций</span></h2>
@@ -797,7 +815,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .6s ease-out" class="bar-fill"></div></div>
         </div>
       </div>
-      <div style="margin-top:8px;padding:10px 14px;background:rgba(61,111,212,.08);border:1px solid rgba(61,111,212,.2);border-radius:10px;display:flex;justify-content:space-between">
+      <div style="margin-top:8px;padding:10px 14px;background:rgba(91,138,240,.08);border:1px solid rgba(91,138,240,.2);border-radius:10px;display:flex;justify-content:space-between">
         <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--blue)">≈ 6 млн ₽ в год</span>
         <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--blue)">×2,5 к вложениям</span>
       </div>
@@ -816,7 +834,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .2s ease-out" class="bar-fill"></div></div>
         </div>
-        <div class="roi-row" data-val="1100" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,168,112,.04);border:1px solid rgba(0,168,112,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
+        <div class="roi-row" data-val="1100" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">ПОЛНАЯ ОПТИМИЗАЦИЯ ★</span>
             <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">1 100 000 ₽</span>
@@ -830,7 +848,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .6s ease-out" class="bar-fill"></div></div>
         </div>
-        <div class="roi-row" data-val="330" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,168,112,.04);border:1px solid rgba(0,168,112,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
+        <div class="roi-row" data-val="330" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">РЕАКТИВАТОР 40 100 ★</span>
             <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">330 000 ₽</span>
@@ -838,7 +856,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .8s ease-out" class="bar-fill"></div></div>
         </div>
       </div>
-      <div style="margin-top:8px;padding:10px 14px;background:rgba(0,168,112,.08);border:1px solid rgba(0,168,112,.25);border-radius:10px;display:flex;justify-content:space-between;box-shadow:var(--gm)">
+      <div style="margin-top:8px;padding:10px 14px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:10px;display:flex;justify-content:space-between;box-shadow:var(--gm)">
         <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">≈ 23 млн ₽ в год</span>
         <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--mint)">×3,1 к вложениям</span>
       </div>
@@ -855,7 +873,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 12 · ПЛАН ВНЕДРЕНИЯ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s13">
+<section class="slide" id="s12">
 <div class="inner">
   <div class="ey">Поэтапно · KPI оцениваем на 6-й неделе</div>
   <h2 class="h2" style="margin-bottom:36px">План <span class="am">внедрения</span></h2>
@@ -894,26 +912,26 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SLIDE 13 · ЧТО ДАЛЬШЕ -->
 <!-- ══════════════════════════════════════════════════════ -->
-<section class="slide" id="s14">
+<section class="slide" id="s13">
 <div class="inner" style="text-align:center;max-width:800px">
   <div class="ey" style="display:flex;justify-content:center">Следующий шаг</div>
   <h2 class="h2" style="margin-bottom:32px">Что <span class="am">дальше</span></h2>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-bottom:32px">
+  <div class="grid-2x2" style="text-align:left;margin-bottom:32px">
     <div class="card" style="display:flex;gap:14px;align-items:flex-start">
-      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,168,112,.12);border:1px solid rgba(0,168,112,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">1</div>
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">1</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5">Обсуждаем выбор опции — А или Б</div>
     </div>
     <div class="card" style="display:flex;gap:14px;align-items:flex-start">
-      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,168,112,.12);border:1px solid rgba(0,168,112,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">2</div>
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">2</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5">Уточняем API Инфоклиники, прайс в едином файле, тон коммуникации</div>
     </div>
     <div class="card" style="display:flex;gap:14px;align-items:flex-start">
-      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,168,112,.12);border:1px solid rgba(0,168,112,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">3</div>
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">3</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5">Согласуем итоговые KPI и сроки замера</div>
     </div>
     <div class="card gm" style="display:flex;gap:14px;align-items:flex-start">
-      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,168,112,.12);border:1px solid rgba(0,168,112,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">4</div>
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">4</div>
       <div style="font-size:13px;color:var(--g1);line-height:1.5"><strong style="color:var(--mint)">Подписываем договор</strong> — старт работ в течение недели</div>
     </div>
   </div>
@@ -932,14 +950,12 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 
 <script>
 const TOTAL = 14;
+const ROI_SLIDE = 12;
 let cur = 1;
 const chartStore = {};
 let roiHoverBound = false;
-
-
-const chartGrid = 'rgba(15,23,42,.06)';
-const chartTick = '#64748b';
-const chartTooltip = { backgroundColor: '#fff', borderColor: '#e2e8f0', borderWidth: 1 };
+let confettiFrame = null;
+let confettiTimer = null;
 
 const chartAnim = {
   duration: 1100,
@@ -986,6 +1002,7 @@ function updateUI() {
   document.getElementById('prog').style.width = ((cur / TOTAL) * 100) + '%';
   document.getElementById('ctr').textContent =
     String(cur).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+  if (cur !== ROI_SLIDE) stopConfetti();
   initSlideMotion(cur);
 }
 
@@ -1011,13 +1028,80 @@ document.addEventListener('touchend', e => {
   if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
 });
 
+function stopConfetti() {
+  if (confettiFrame) cancelAnimationFrame(confettiFrame);
+  confettiFrame = null;
+  if (confettiTimer) clearTimeout(confettiTimer);
+  confettiTimer = null;
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  canvas.style.display = 'none';
+  const ctx = canvas.getContext('2d');
+  if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function launchConfetti() {
+  if (cur !== ROI_SLIDE) return;
+  stopConfetti();
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const symbols = ['₽', '₽', '₽', '₽', '💰', '💵', '🪙', '💸'];
+  const colors = ['#00E5A0', '#FFD700', '#5B8AF0', '#fff', '#FF9E2C', '#00E5A0'];
+  const pts = Array.from({ length: 90 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -Math.random() * canvas.height * 0.6,
+    vx: (Math.random() - 0.5) * 4,
+    vy: 2.5 + Math.random() * 4,
+    sym: symbols[Math.floor(Math.random() * symbols.length)],
+    sz: 16 + Math.random() * 22,
+    rot: Math.random() * Math.PI * 2,
+    rv: (Math.random() - 0.5) * 0.18,
+    op: 0.85 + Math.random() * 0.15,
+    col: colors[Math.floor(Math.random() * colors.length)]
+  }));
+  let f = 0;
+  const max = 220;
+  function tick() {
+    if (f >= max || cur !== ROI_SLIDE) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+      confettiFrame = null;
+      return;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pts.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.rv;
+      if (f > max - 70) p.op = Math.max(0, p.op - 0.012);
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = p.op;
+      ctx.fillStyle = p.col;
+      ctx.font = `${p.sz}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.sym, 0, 0);
+      ctx.restore();
+    });
+    f++;
+    confettiFrame = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
 function bindRoiHover() {
   if (roiHoverBound) return;
   roiHoverBound = true;
   document.querySelectorAll('#s12 .roi-row').forEach(row => {
     row.addEventListener('mouseenter', () => {
-      row.style.borderColor = row.dataset.col === 'mint' ? 'rgba(0,168,112,.5)' : 'rgba(61,111,212,.5)';
-      row.style.background = row.dataset.col === 'mint' ? 'rgba(0,168,112,.2)' : 'rgba(61,111,212,.2)';
+      row.style.borderColor = row.dataset.col === 'mint' ? 'rgba(0,229,160,.5)' : 'rgba(91,138,240,.5)';
+      row.style.background = row.dataset.col === 'mint' ? 'rgba(0,229,160,.2)' : 'rgba(91,138,240,.2)';
     });
     row.addEventListener('mouseleave', () => {
       row.style.borderColor = '';
@@ -1053,16 +1137,16 @@ function buildCompareChart() {
         {
           label: 'Опция А',
           data: [150, 300, 50, 0],
-          backgroundColor: 'rgba(61,111,212,.65)',
-          borderColor: '#3d6fd4',
+          backgroundColor: 'rgba(91,138,240,.65)',
+          borderColor: '#5B8AF0',
           borderWidth: 1,
           borderRadius: 6
         },
         {
           label: 'Опция Б',
           data: [200, 1100, 292, 330],
-          backgroundColor: 'rgba(0,168,112,.65)',
-          borderColor: '#00a870',
+          backgroundColor: 'rgba(0,229,160,.65)',
+          borderColor: '#00E5A0',
           borderWidth: 1,
           borderRadius: 6
         }
@@ -1073,10 +1157,10 @@ function buildCompareChart() {
       maintainAspectRatio: false,
       animation: chartAnim,
       plugins: {
-        legend: { labels: { color: '#64748b', boxWidth: 12, padding: 14, font: { size: 12 } } },
+        legend: { labels: { color: '#888', boxWidth: 12, padding: 14, font: { size: 12 } } },
         tooltip: {
-          backgroundColor: '#fff',
-          borderColor: '#e2e8f0',
+          backgroundColor: '#111',
+          borderColor: '#333',
           borderWidth: 1,
           callbacks: {
             label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс.\u00a0₽'
@@ -1084,8 +1168,8 @@ function buildCompareChart() {
         }
       },
       scales: {
-        x: { grid: { color: 'rgba(15,23,42,.06)' }, ticks: { color: '#64748b', maxRotation: 0, font: { size: 11 } } },
-        y: { grid: { color: 'rgba(15,23,42,.06)' }, ticks: { color: '#64748b', callback: v => v + 'к', font: { size: 11 } } }
+        x: { grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#666', maxRotation: 0, font: { size: 11 } } },
+        y: { grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#666', callback: v => v + 'к', font: { size: 11 } } }
       }
     }
   });
@@ -1104,10 +1188,10 @@ function buildRoiChart() {
           label: 'Опция А (тыс. ₽)',
           data: [150, 300, 50, 0, 500],
           backgroundColor: [
-            'rgba(61,111,212,.5)', 'rgba(61,111,212,.5)', 'rgba(61,111,212,.5)',
-            'rgba(61,111,212,.1)', 'rgba(61,111,212,.85)'
+            'rgba(91,138,240,.5)', 'rgba(91,138,240,.5)', 'rgba(91,138,240,.5)',
+            'rgba(91,138,240,.1)', 'rgba(91,138,240,.85)'
           ],
-          borderColor: '#3d6fd4',
+          borderColor: '#5B8AF0',
           borderWidth: 1,
           borderRadius: 6
         },
@@ -1115,10 +1199,10 @@ function buildRoiChart() {
           label: 'Опция Б (тыс. ₽)',
           data: [200, 1100, 293, 330, 1923],
           backgroundColor: [
-            'rgba(0,168,112,.5)', 'rgba(0,168,112,.5)', 'rgba(0,168,112,.5)',
-            'rgba(0,168,112,.5)', 'rgba(0,168,112,.9)'
+            'rgba(0,229,160,.5)', 'rgba(0,229,160,.5)', 'rgba(0,229,160,.5)',
+            'rgba(0,229,160,.5)', 'rgba(0,229,160,.9)'
           ],
-          borderColor: '#00a870',
+          borderColor: '#00E5A0',
           borderWidth: 1,
           borderRadius: 6
         }
@@ -1129,10 +1213,10 @@ function buildRoiChart() {
       maintainAspectRatio: false,
       animation: chartAnim,
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#64748b', boxWidth: 12, padding: 12, font: { size: 11 } } },
+        legend: { position: 'bottom', labels: { color: '#777', boxWidth: 12, padding: 12, font: { size: 11 } } },
         tooltip: {
-          backgroundColor: '#fff',
-          borderColor: '#e2e8f0',
+          backgroundColor: '#111',
+          borderColor: '#222',
           borderWidth: 1,
           callbacks: {
             label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс.\u00a0₽'
@@ -1140,8 +1224,8 @@ function buildRoiChart() {
         }
       },
       scales: {
-        x: { grid: { color: 'rgba(15,23,42,.06)' }, ticks: { color: '#64748b', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(15,23,42,.06)' }, ticks: { color: '#64748b', callback: v => v + 'к', font: { size: 11 } } }
+        x: { grid: { color: 'rgba(255,255,255,.03)' }, ticks: { color: '#666', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(255,255,255,.03)' }, ticks: { color: '#666', callback: v => v + 'к', font: { size: 11 } } }
       }
     }
   });
@@ -1153,8 +1237,9 @@ function initSlideMotion(n) {
     if (el) animateCount(el, +el.dataset.target);
   }
   if (n === 9) setTimeout(buildCompareChart, 280);
-  if (n === 12) {
+  if (n === ROI_SLIDE) {
     setTimeout(buildRoiChart, 280);
+    confettiTimer = setTimeout(launchConfetti, 500);
   }
 }
 
