@@ -69,9 +69,16 @@ body:hover .nb{opacity:1}
 .h2{font-size:clamp(34px,4.2vw,64px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
 .h3{font-size:clamp(18px,2.3vw,30px);font-weight:700;line-height:1.2}
 .sub{font-size:clamp(15px,1.6vw,20px);color:var(--g1);line-height:1.6}
-a.contact-link{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,229,160,.35);
-  transition:color .2s,border-color .2s}
-a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
+a.contact-link{color:inherit;text-decoration:none;
+  text-decoration-line:underline;text-decoration-color:rgba(0,168,112,.4);
+  text-underline-offset:5px;text-decoration-thickness:1px;
+  transition:color .2s,text-decoration-color .2s}
+a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
+.contact-sep{width:100%;height:0;border:none;border-top:1px solid var(--border);
+  margin:14px 0 18px;flex-shrink:0}
+.strike-below{position:relative;display:inline-block;text-decoration:none;color:var(--g2)}
+.strike-below::after{content:'';position:absolute;left:0;right:0;bottom:0.1em;height:2px;
+  background:currentColor;opacity:.6;pointer-events:none}
 .am{color:var(--mint)}.ab{color:var(--blue)}.aa{color:var(--amber)}.ar{color:var(--red)}
 .mono{font-family:'Space Mono',monospace}
 
@@ -153,11 +160,12 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 
 /* timeline */
 .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%;position:relative}
-.tl::before{content:'';position:absolute;top:20px;left:12.5%;right:12.5%;height:2px;
-  background:var(--mint);box-shadow:0 0 12px rgba(0,229,160,.5)}
+.tl::before{content:'';position:absolute;top:43px;left:12.5%;right:12.5%;height:2px;
+  background:var(--mint);box-shadow:0 0 12px rgba(0,229,160,.5);z-index:0}
 .ti{display:flex;flex-direction:column;align-items:center;padding:0 10px}
 .td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1}
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1;
+  background:var(--card)}
 .td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
 .tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
   text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;text-align:center}
@@ -939,8 +947,8 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
   <div class="card" style="display:inline-flex;flex-direction:column;gap:12px;padding:28px 40px;text-align:center">
     <div style="font-size:18px;font-weight:700">Александр Джапаридзе</div>
     <div style="font-size:13px;color:var(--g1)">Основатель · СмайлБот</div>
-    <div style="width:100%;height:1px;background:var(--border)"></div>
-    <div class="slide-s13-contacts" style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap">
+    <div class="contact-sep"></div>
+    <div class="slide-s13-contacts" style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:4px">
       <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">TEL</span>&nbsp; <a class="contact-link" href="tel:+79687184420">+7 (968) 718-44-20</a></div>
       <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">EMAIL</span>&nbsp; <a class="contact-link" href="mailto:alexdzha89@gmail.com">alexdzha89@gmail.com</a></div>
     </div>
