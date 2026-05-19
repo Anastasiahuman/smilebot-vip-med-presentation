@@ -160,15 +160,14 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
 
 /* timeline */
 .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%;position:relative}
-.ti{display:flex;flex-direction:column;align-items:center;padding:0 10px}
-.tl-node{position:relative;display:flex;justify-content:center;width:100%;margin-bottom:14px}
-.ti:not(:last-child) .tl-node::after{content:'';position:absolute;top:50%;left:calc(50% + 21px);
-  width:calc(100% - 42px);height:2px;transform:translateY(-50%);
+.tl-rail{position:absolute;top:21px;left:12.5%;width:75%;height:2px;transform:translateY(-50%);
   background:var(--mint);box-shadow:0 0 12px rgba(0,168,112,.45);z-index:0;pointer-events:none}
+.ti{display:flex;flex-direction:column;align-items:center;padding:0 10px;position:relative;z-index:1}
+.tl-node{position:relative;display:flex;justify-content:center;width:100%;height:42px;margin-bottom:14px;z-index:1}
 .td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;position:relative;z-index:1;
-  background:var(--card)}
-.td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;position:relative;z-index:2;
+  background:var(--card);box-sizing:border-box}
+.td.on,.td.off{background:var(--card);border:2px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
 .tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
   text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;text-align:center}
 .ttit{font-size:17px;font-weight:700;margin-bottom:6px;text-align:center}
@@ -233,7 +232,7 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
   .ig{grid-template-columns:1fr;gap:12px}
   .icenter{flex-direction:row;justify-content:center;padding:8px 0}
   .tl{grid-template-columns:1fr 1fr;gap:20px}
-  .ti:not(:last-child) .tl-node::after{display:none}
+  .tl-rail{display:none}
   .slide-s1-grid{grid-template-columns:1fr!important;gap:28px!important}
   .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
   .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -887,6 +886,7 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
   <div class="ey">Поэтапно · KPI оцениваем на 6-й неделе</div>
   <h2 class="h2" style="margin-bottom:36px">План <span class="am">внедрения</span></h2>
   <div class="tl">
+    <div class="tl-rail" aria-hidden="true"></div>
     <div class="ti">
       <div class="tl-node"><div class="td on">1–2</div></div>
       <div class="tlab">Недели 1–2</div>
