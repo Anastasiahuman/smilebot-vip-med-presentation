@@ -18,6 +18,7 @@
   --gm:0 0 60px rgba(0,229,160,.13),0 0 120px rgba(0,229,160,.06);
   --gb:0 0 60px rgba(91,138,240,.13);
   --ga:0 0 60px rgba(255,158,44,.13);
+  --inner-max:960px;--slide-pad-y:56px;--slide-pad-x:72px;--content-zoom:1.22;
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--w);
   font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased}
@@ -37,9 +38,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   box-shadow:0 0 8px var(--mint);transition:width .5s cubic-bezier(.4,0,.2,1);z-index:1000}
 
 /* logo + counter */
-#logo{position:fixed;top:26px;left:36px;font-family:'Space Mono',monospace;font-size:12px;
+#logo{position:fixed;top:26px;left:36px;font-family:'Space Mono',monospace;font-size:10px;
   letter-spacing:.18em;color:var(--g2);z-index:1000}
-#ctr{position:fixed;bottom:26px;right:36px;font-family:'Space Mono',monospace;font-size:12px;
+#ctr{position:fixed;bottom:26px;right:36px;font-family:'Space Mono',monospace;font-size:10px;
   color:var(--g2);letter-spacing:.12em;z-index:1000}
 
 /* nav */
@@ -54,19 +55,23 @@ body:hover .nb{opacity:1}
 
 /* slides */
 .slide{position:fixed;inset:0;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;padding:56px 72px;
+  justify-content:center;align-items:center;padding:var(--slide-pad-y) var(--slide-pad-x);
   opacity:0;transform:translateY(22px);pointer-events:none;
-  transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
+  transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);
+  overflow:hidden}
 .slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
 .slide.out{opacity:0;transform:translateY(-22px)}
 
 /* typography */
-.ey{font-family:'Space Mono',monospace;font-size:15px;letter-spacing:.22em;
-  color:var(--g2);text-transform:uppercase;margin-bottom:20px}
-.h1{font-size:clamp(56px,7.2vw,104px);font-weight:800;letter-spacing:-.025em;line-height:1}
-.h2{font-size:clamp(42px,5.2vw,76px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
-.h3{font-size:clamp(22px,2.8vw,36px);font-weight:700;line-height:1.2}
-.sub{font-size:clamp(17px,1.9vw,24px);color:var(--g1);line-height:1.6}
+.ey{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.22em;
+  color:var(--g2);text-transform:uppercase;margin-bottom:16px}
+.h1{font-size:clamp(48px,6.2vw,88px);font-weight:800;letter-spacing:-.025em;line-height:1}
+.h2{font-size:clamp(34px,4.2vw,64px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.h3{font-size:clamp(18px,2.3vw,30px);font-weight:700;line-height:1.2}
+.sub{font-size:clamp(15px,1.6vw,20px);color:var(--g1);line-height:1.6}
+a.contact-link{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,229,160,.35);
+  transition:color .2s,border-color .2s}
+a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 .am{color:var(--mint)}.ab{color:var(--blue)}.aa{color:var(--amber)}.ar{color:var(--red)}
 .mono{font-family:'Space Mono',monospace}
 
@@ -80,16 +85,16 @@ body:hover .nb{opacity:1}
 .gb{box-shadow:var(--gb);border-color:rgba(91,138,240,.15)!important}
 
 /* badge */
-.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:100px;
-  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.06em}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em}
 .b-a{background:rgba(91,138,240,.12);color:var(--blue);border:1px solid rgba(91,138,240,.25)}
 .b-b{background:rgba(0,229,160,.12);color:var(--mint);border:1px solid rgba(0,229,160,.25)}
 .b-w{background:rgba(255,158,44,.12);color:var(--amber);border:1px solid rgba(255,158,44,.25)}
 .b-r{background:rgba(255,85,85,.12);color:var(--red);border:1px solid rgba(255,85,85,.25)}
 
 /* stat pills */
-.pill{display:inline-flex;align-items:center;padding:6px 15px;border-radius:100px;
-  font-family:'Space Mono',monospace;font-size:15px;font-weight:700}
+.pill{display:inline-flex;align-items:center;padding:5px 13px;border-radius:100px;
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700}
 .pu{background:rgba(0,229,160,.1);color:var(--mint)}
 .pb{background:rgba(91,138,240,.1);color:var(--blue)}
 
@@ -98,24 +103,24 @@ body:hover .nb{opacity:1}
 
 /* check / cross lists */
 .cl{list-style:none;display:flex;flex-direction:column;gap:0}
-.cl li{display:flex;align-items:flex-start;gap:12px;padding:11px 0;
-  border-bottom:1px solid var(--border);font-size:17px;color:var(--g1);line-height:1.55}
+.cl li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border);font-size:15px;color:var(--g1);line-height:1.5}
 .cl li:last-child{border-bottom:none}
-.cl li::before{content:'✓';color:var(--mint);font-weight:700;flex-shrink:0;margin-top:1px;font-size:16px}
+.cl li::before{content:'✓';color:var(--mint);font-weight:700;flex-shrink:0;margin-top:1px;font-size:14px}
 .xl li::before{content:'×';color:var(--red)}
 
 /* metric card */
 .mc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
-.ml{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--g2);margin-bottom:8px}
-.mv{font-family:'Space Mono',monospace;font-size:clamp(28px,3.4vw,42px);font-weight:700}
-.ms{font-size:15px;color:var(--g2);margin-top:4px}
+.ml{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--g2);margin-bottom:6px}
+.mv{font-family:'Space Mono',monospace;font-size:clamp(24px,3vw,36px);font-weight:700}
+.ms{font-size:13px;color:var(--g2);margin-top:3px}
 
 /* grids */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}
-.inner{width:100%;max-width:1000px;zoom:1.38}
+.inner{width:100%;max-width:var(--inner-max);zoom:var(--content-zoom)}
 
 /* chart reveal */
 .chart-wrap{opacity:0;transform:translateY(20px) scale(.98);
@@ -126,14 +131,14 @@ body:hover .nb{opacity:1}
 .count-up{display:inline-block;min-width:1ch}
 
 /* table */
-.ct{width:100%;border-collapse:collapse;font-size:16px}
-.ct th{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+.ct{width:100%;border-collapse:collapse;font-size:14px}
+.ct th{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--g2);padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
 .ct th.ha{color:var(--blue)}.ct th.hb{color:var(--mint)}
 .ct td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
-.ct td.r{color:var(--g2);font-size:15px}
-.ct td.va{color:var(--w);font-family:'Space Mono',monospace;font-size:15px}
-.ct td.vb{color:var(--mint);font-family:'Space Mono',monospace;font-size:15px}
+.ct td.r{color:var(--g2);font-size:13px}
+.ct td.va{color:var(--w);font-family:'Space Mono',monospace;font-size:13px}
+.ct td.vb{color:var(--mint);font-family:'Space Mono',monospace;font-size:13px}
 .ct tr:hover td{background:rgba(255,255,255,.02)}
 
 /* timeline */
@@ -144,10 +149,10 @@ body:hover .nb{opacity:1}
 .td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1}
 .td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
-.tlab{font-size:15px;font-family:'Space Mono',monospace;color:var(--g2);
-  text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:center}
-.ttit{font-size:20px;font-weight:700;margin-bottom:8px;text-align:center}
-.ttxt{font-size:17px;color:var(--g2);line-height:1.55;text-align:center}
+.tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;text-align:center}
+.ttit{font-size:17px;font-weight:700;margin-bottom:6px;text-align:center}
+.ttxt{font-size:15px;color:var(--g2);line-height:1.5;text-align:center}
 
 /* integration */
 .ig{display:grid;grid-template-columns:1fr 80px 1fr;gap:16px;align-items:start;width:100%}
@@ -161,12 +166,43 @@ body:hover .nb{opacity:1}
   padding:8px 12px;border:1px solid rgba(0,229,160,.3);border-radius:8px;
   background:rgba(0,229,160,.05);box-shadow:var(--gm);text-align:center;white-space:nowrap}
 
-@media(max-width:900px){
-  .slide{padding:40px 32px}
+/* ноутбук 1024–1439 */
+@media(min-width:1024px) and (max-width:1439px){
+  :root{--inner-max:900px;--slide-pad-y:48px;--slide-pad-x:56px;--content-zoom:1.12}
+  #logo{left:28px}
+  #ctr{right:28px}
+  #bp{left:12px}#bn{right:12px}
+  .slide-s1-grid{gap:48px!important}
+}
+/* планшет 768–1023 */
+@media(min-width:768px) and (max-width:1023px){
+  :root{--inner-max:680px;--slide-pad-y:36px;--slide-pad-x:40px;--content-zoom:1}
+  #logo{top:18px;left:24px;font-size:9px}
+  #ctr{bottom:18px;right:24px;font-size:9px}
+  #bp{left:10px}#bn{right:10px}
+  .nb{width:40px;height:40px}
+  .slide.active{overflow-y:auto;justify-content:flex-start;padding-top:52px;padding-bottom:52px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .ig{grid-template-columns:1fr;gap:12px}
+  .icenter{flex-direction:row;justify-content:center;padding:8px 0}
+  .tl{grid-template-columns:1fr 1fr;gap:20px}
+  .tl::before{display:none}
+  .slide-s1-grid{grid-template-columns:1fr!important;gap:28px!important}
+  .slide-s9-grid{grid-template-columns:1fr!important}
+  .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
+  #wrapCompare{height:200px!important}
+  #wrapRoi{height:130px!important}
+}
+/* узкий экран */
+@media(max-width:767px){
+  :root{--inner-max:100%;--slide-pad-y:28px;--slide-pad-x:24px;--content-zoom:.95}
+  .slide.active{overflow-y:auto;justify-content:flex-start;padding-top:44px}
   .g2,.g3,.g4{grid-template-columns:1fr}
   .ig{grid-template-columns:1fr}
-  .tl{grid-template-columns:1fr 1fr}
+  .tl{grid-template-columns:1fr}
   .tl::before{display:none}
+  .slide-s1-grid{grid-template-columns:1fr!important}
+  .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
 }
 </style>
 </head>
@@ -189,7 +225,7 @@ body:hover .nb{opacity:1}
 <!-- SLIDE 1 · TITLE -->
 <!-- ══════════════════════════════════════════════════════ -->
 <section class="slide active" id="s1">
-<div class="inner" style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center">
+<div class="inner slide-s1-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center">
   <div>
     <div class="ey">Финальный расчёт · Два варианта пилота по итогам ТЗ</div>
     <h1 class="h1">Смайл<span class="am">Бот</span></h1>
@@ -211,11 +247,11 @@ body:hover .nb{opacity:1}
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px">
         <span class="am" style="font-size:10px;letter-spacing:.1em">TEL</span>
-        <span>+7 (968) 718-44-20</span>
+        <a class="contact-link" href="tel:+79687184420">+7 (968) 718-44-20</a>
       </div>
       <div style="display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px">
         <span class="am" style="font-size:10px;letter-spacing:.1em">EMAIL</span>
-        <span>alexdzha89@gmail.com</span>
+        <a class="contact-link" href="mailto:alexdzha89@gmail.com">alexdzha89@gmail.com</a>
       </div>
     </div>
     <div style="padding-top:18px;border-top:1px solid var(--border)">
@@ -317,7 +353,7 @@ body:hover .nb{opacity:1}
 
   <div style="position:relative;padding:40px;margin-bottom:32px">
     <div style="font-size:clamp(11px,1.1vw,13px);font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:8px;letter-spacing:.1em">ДОПОЛНИТЕЛЬНАЯ ВЫРУЧКА / МЕС (КОНСЕРВАТИВНО)</div>
-    <div class="bn" style="font-size:clamp(58px,7.5vw,108px);color:var(--mint);text-shadow:0 0 80px rgba(0,229,160,.4)">
+    <div class="bn" style="font-size:clamp(50px,6.5vw,92px);color:var(--mint);text-shadow:0 0 80px rgba(0,229,160,.4)">
       <span class="count-up" id="revenueCount" data-target="1500000">+0 ₽</span>
     </div>
     <div style="font-size:14px;color:var(--g1);margin-top:8px">≈ 18 миллионов рублей в год · только с одного модуля</div>
@@ -536,7 +572,7 @@ body:hover .nb{opacity:1}
 <div class="inner">
   <div class="ey">Один взгляд — и понятно, что выбирать</div>
   <h2 class="h2" style="margin-bottom:24px">Сравнение <span class="ab">Опции А</span> и <span class="am">Опции Б</span></h2>
-  <div class="g2" style="gap:28px;align-items:start">
+  <div class="g2 slide-s9-grid" style="gap:28px;align-items:start">
     <div>
       <table class="ct">
         <thead>
@@ -803,9 +839,9 @@ body:hover .nb{opacity:1}
     <div style="font-size:18px;font-weight:700">Александр Джапаридзе</div>
     <div style="font-size:13px;color:var(--g1)">Основатель · СмайлБот</div>
     <div style="width:100%;height:1px;background:var(--border)"></div>
-    <div style="display:flex;gap:24px;justify-content:center">
-      <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">TEL</span>&nbsp; +7 (968) 718-44-20</div>
-      <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">EMAIL</span>&nbsp; alexdzha89@gmail.com</div>
+    <div class="slide-s13-contacts" style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap">
+      <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">TEL</span>&nbsp; <a class="contact-link" href="tel:+79687184420">+7 (968) 718-44-20</a></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">EMAIL</span>&nbsp; <a class="contact-link" href="mailto:alexdzha89@gmail.com">alexdzha89@gmail.com</a></div>
     </div>
   </div>
 </div>
