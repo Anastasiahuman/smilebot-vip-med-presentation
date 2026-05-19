@@ -128,7 +128,11 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 .chart-wrap.reveal{opacity:1;transform:translateY(0) scale(1)}
 .chart-wrap canvas{opacity:0;transition:opacity .4s ease .15s}
 .chart-wrap.reveal canvas{opacity:1}
-.count-up{display:inline-block;min-width:1ch}
+.count-up{display:inline-block}
+.money{display:inline-flex;align-items:baseline;gap:.15em;white-space:nowrap}
+.money-val{letter-spacing:-.03em}
+.money-cur{font-size:.82em;opacity:.95;flex-shrink:0}
+.mv,.bn,.ct td.va,.ct td.vb,.pill,.roi-row [style*="Space Mono"]{white-space:nowrap}
 
 /* table */
 .ct{width:100%;border-collapse:collapse;font-size:14px}
@@ -353,8 +357,8 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
 
   <div style="position:relative;padding:40px;margin-bottom:32px">
     <div style="font-size:clamp(11px,1.1vw,13px);font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:8px;letter-spacing:.1em">ДОПОЛНИТЕЛЬНАЯ ВЫРУЧКА / МЕС (КОНСЕРВАТИВНО)</div>
-    <div class="bn" style="font-size:clamp(50px,6.5vw,92px);color:var(--mint);text-shadow:0 0 80px rgba(0,229,160,.4)">
-      <span class="count-up" id="revenueCount" data-target="1500000">+0 ₽</span>
+    <div class="bn money" style="font-size:clamp(50px,6.5vw,92px);color:var(--mint);text-shadow:0 0 80px rgba(0,229,160,.4)">
+      <span class="money-val count-up" id="revenueCount" data-target="1500000">+0</span><span class="money-cur">₽</span>
     </div>
     <div style="font-size:14px;color:var(--g1);margin-top:8px">≈ 18 миллионов рублей в год · только с одного модуля</div>
     <div style="position:absolute;inset:0;border-radius:20px;border:1px solid rgba(0,229,160,.1);pointer-events:none"></div>
@@ -396,12 +400,12 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
         <div class="mc gb">
           <div class="ml">Стоимость внедрения</div>
-          <div class="mv ab">200 000 ₽</div>
+          <div class="mv ab">200 000 ₽</div>
           <div class="ms">4–6 недель от подписания</div>
         </div>
         <div class="mc">
           <div class="ml">Ежемесячная плата</div>
-          <div class="mv ab">45 000 ₽</div>
+          <div class="mv ab">45 000 ₽</div>
           <div class="ms">Окупаемость: 1–2 мес.</div>
         </div>
       </div>
@@ -489,12 +493,12 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
         <div class="mc gm">
           <div class="ml">Стоимость внедрения</div>
-          <div class="mv am">550 000 ₽</div>
+          <div class="mv am">550 000 ₽</div>
           <div class="ms">6–10 недель от подписания</div>
         </div>
         <div class="mc">
           <div class="ml">Ежемесячная плата</div>
-          <div class="mv am">70 000 ₽</div>
+          <div class="mv am">70 000 ₽</div>
           <div class="ms">Окупаемость: <strong class="am">2–3 недели</strong></div>
         </div>
       </div>
@@ -583,8 +587,8 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           </tr>
         </thead>
         <tbody>
-          <tr><td class="r">Внедрение</td><td class="va">200 000 ₽</td><td class="vb">550 000 ₽</td></tr>
-          <tr><td class="r">MRR</td><td class="va">45 000 ₽</td><td class="vb">70 000 ₽</td></tr>
+          <tr><td class="r">Внедрение</td><td class="va">200 000 ₽</td><td class="vb">550 000 ₽</td></tr>
+          <tr><td class="r">MRR</td><td class="va">45 000 ₽</td><td class="vb">70 000 ₽</td></tr>
           <tr><td class="r">Срок</td><td class="va">4–6 нед.</td><td class="vb">6–10 нед.</td></tr>
           <tr><td class="r">Модули из ТЗ</td><td class="va">2 из 4</td><td class="vb">4 из 4</td></tr>
           <tr><td class="r">Каналы записи</td><td class="va">MAX</td><td class="vb">MAX+VK+сайт</td></tr>
@@ -592,12 +596,12 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
           <tr><td class="r">Реактиватор 40 100</td><td class="va" style="color:var(--red)">—</td><td class="vb">Входит</td></tr>
           <tr><td class="r">Лист ожидания</td><td class="va" style="color:var(--red)">—</td><td class="vb">Входит</td></tr>
           <tr><td class="r">Окупаемость</td><td class="va">1–2 мес.</td><td class="vb">2–3 недели</td></tr>
-          <tr><td class="r">Эффект в мес.</td><td class="va">~500 тыс. ₽</td><td class="vb">~1,9 млн ₽</td></tr>
+          <tr><td class="r">Эффект в мес.</td><td class="va">~500 тыс. ₽</td><td class="vb">~1,9 млн ₽</td></tr>
         </tbody>
       </table>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:4px">Месячный эффект, тыс. ₽</div>
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:4px">Месячный эффект, тыс. ₽</div>
       <div class="chart-wrap" id="wrapCompare" style="position:relative;height:240px"><canvas id="chartCompare"></canvas></div>
       <div style="padding:14px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.15);border-radius:10px">
         <div style="font-size:11px;font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:6px">ГЛАВНОЕ</div>
@@ -630,10 +634,10 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
             <span style="color:var(--g1)">Недозагрузка расписания</span><span class="mono ar">30%</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
-            <span style="color:var(--g1)">Чек первичного приёма</span><span class="mono" style="color:var(--w)">2 600 ₽</span>
+            <span style="color:var(--g1)">Чек первичного приёма</span><span class="mono" style="color:var(--w)">2 600 ₽</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
-            <span style="color:var(--g1)">Чек диагностики (МРТ/КТ/УЗИ)</span><span class="mono" style="color:var(--w)">5 500 ₽</span>
+            <span style="color:var(--g1)">Чек диагностики (МРТ/КТ/УЗИ)</span><span class="mono" style="color:var(--w)">5 500 ₽</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;font-size:12.5px">
             <span style="color:var(--g1)">Админов в смене</span><span class="mono" style="color:var(--w)">5–6 чел.</span>
@@ -646,7 +650,7 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
       <div class="card" style="padding:0;overflow:hidden">
         <div style="display:flex;flex-direction:column">
           <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
-            <span style="color:var(--g1)">Средневзвешенный чек</span><span class="mono am">4 000 ₽</span>
+            <span style="color:var(--g1)">Средневзвешенный чек</span><span class="mono am">4 000 ₽</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
             <span style="color:var(--g1)">Рабочих дней в месяц</span><span class="mono am">22 дня</span>
@@ -689,27 +693,27 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <span class="badge b-a">ОПЦИЯ А · ЛАЙТ</span>
-        <span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--blue)">500 000 ₽/мес</span>
+        <span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--blue)">500 000 ₽/мес</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div class="roi-row" data-val="150" data-max="1922" data-col="blue" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">РАЗГРУЗКА АДМИНОВ</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">150 000 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">150 000 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .2s ease-out" class="bar-fill"></div></div>
         </div>
         <div class="roi-row" data-val="300" data-max="1922" data-col="blue" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">ОПТИМИЗАЦИЯ РАСПИСАНИЯ</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">300 000 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">300 000 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .4s ease-out" class="bar-fill"></div></div>
         </div>
         <div class="roi-row" data-val="50" data-max="1922" data-col="blue" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">ЗАПИСЬ ЧЕРЕЗ MAX</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">50 000 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">50 000 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .6s ease-out" class="bar-fill"></div></div>
         </div>
@@ -723,34 +727,34 @@ a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <span class="badge b-b">ОПЦИЯ Б · ПОЛНЫЙ ★</span>
-        <span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--mint)">1 922 500 ₽/мес</span>
+        <span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--mint)">1 922 500 ₽/мес</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div class="roi-row" data-val="200" data-max="1922" data-col="mint" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">РАЗГРУЗКА АДМИНОВ +</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">200 000 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">200 000 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .2s ease-out" class="bar-fill"></div></div>
         </div>
         <div class="roi-row" data-val="1100" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">ПОЛНАЯ ОПТИМИЗАЦИЯ ★</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">1 100 000 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">1 100 000 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .4s ease-out" class="bar-fill"></div></div>
         </div>
         <div class="roi-row" data-val="293" data-max="1922" data-col="mint" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">ЗАПИСЬ MAX+VK+САЙТ</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">292 500 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">292 500 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .6s ease-out" class="bar-fill"></div></div>
         </div>
         <div class="roi-row" data-val="330" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">РЕАКТИВАТОР 40 100 ★</span>
-            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">330 000 ₽</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">330 000 ₽</span>
           </div>
           <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .8s ease-out" class="bar-fill"></div></div>
         </div>
@@ -885,7 +889,7 @@ function animateCount(el, target, duration = 1400) {
   function frame(now) {
     const p = Math.min(1, (now - start) / duration);
     const val = Math.round(target * ease(p));
-    el.textContent = '+' + val.toLocaleString('ru-RU') + ' ₽';
+    el.textContent = '+' + val.toLocaleString('ru-RU');
     if (p < 1) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
@@ -1043,7 +1047,7 @@ function buildCompareChart() {
           borderColor: '#333',
           borderWidth: 1,
           callbacks: {
-            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс. ₽'
+            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс. ₽'
           }
         }
       },
@@ -1069,7 +1073,7 @@ function buildRoiChart() {
       labels: ['Разгрузка\nадминов', 'Оптимизация\nрасписания', 'Запись', 'Реактиватор', 'ИТОГО'],
       datasets: [
         {
-          label: 'Опция А (тыс. ₽)',
+          label: 'Опция А (тыс. ₽)',
           data: [150, 300, 50, 0, 500],
           backgroundColor: [
             'rgba(91,138,240,.5)', 'rgba(91,138,240,.5)', 'rgba(91,138,240,.5)',
@@ -1080,7 +1084,7 @@ function buildRoiChart() {
           borderRadius: 6
         },
         {
-          label: 'Опция Б (тыс. ₽)',
+          label: 'Опция Б (тыс. ₽)',
           data: [200, 1100, 293, 330, 1923],
           backgroundColor: [
             'rgba(0,229,160,.5)', 'rgba(0,229,160,.5)', 'rgba(0,229,160,.5)',
@@ -1103,7 +1107,7 @@ function buildRoiChart() {
           borderColor: '#222',
           borderWidth: 1,
           callbacks: {
-            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс. ₽'
+            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс. ₽'
           }
         }
       },
