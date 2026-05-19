@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СмайлБот · Финальный расчёт · ВИП-МЕД</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000;--card:rgba(255,255,255,.03);--card-hi:rgba(255,255,255,.055);
+  --border:rgba(255,255,255,.07);--border-hi:rgba(255,255,255,.16);
+  --mint:#00E5A0;--blue:#5B8AF0;--amber:#FF9E2C;--red:#FF5555;
+  --w:#fff;--g1:#aaa;--g2:#555;--g3:#1a1a1a;
+  --gm:0 0 60px rgba(0,229,160,.13),0 0 120px rgba(0,229,160,.06);
+  --gb:0 0 60px rgba(91,138,240,.13);
+  --ga:0 0 60px rgba(255,158,44,.13);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--w);
+  font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased}
+
+/* grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")}
+
+/* orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.055;pointer-events:none}
+.o1{width:700px;height:700px;background:var(--mint);top:-250px;right:-200px}
+.o2{width:500px;height:500px;background:var(--blue);bottom:-200px;left:-150px}
+.o3{width:300px;height:300px;background:var(--amber);top:50%;left:50%;transform:translate(-50%,-50%);opacity:.03}
+
+/* progress */
+#prog{position:fixed;top:0;left:0;height:1px;background:var(--mint);
+  box-shadow:0 0 8px var(--mint);transition:width .5s cubic-bezier(.4,0,.2,1);z-index:1000}
+
+/* logo + counter */
+#logo{position:fixed;top:26px;left:36px;font-family:'Space Mono',monospace;font-size:12px;
+  letter-spacing:.18em;color:var(--g2);z-index:1000}
+#ctr{position:fixed;bottom:26px;right:36px;font-family:'Space Mono',monospace;font-size:12px;
+  color:var(--g2);letter-spacing:.12em;z-index:1000}
+
+/* nav */
+.nb{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;
+  border:1px solid var(--border);background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--g2);opacity:0;transition:opacity .3s,border-color .3s,color .3s;z-index:1000}
+body:hover .nb{opacity:1}
+.nb:hover{border-color:var(--mint);color:var(--mint)}
+#bp{left:18px}#bn{right:18px}
+.nb svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+
+/* slides */
+.slide{position:fixed;inset:0;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;padding:56px 72px;
+  opacity:0;transform:translateY(22px);pointer-events:none;
+  transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide.out{opacity:0;transform:translateY(-22px)}
+
+/* typography */
+.ey{font-family:'Space Mono',monospace;font-size:15px;letter-spacing:.22em;
+  color:var(--g2);text-transform:uppercase;margin-bottom:20px}
+.h1{font-size:clamp(56px,7.2vw,104px);font-weight:800;letter-spacing:-.025em;line-height:1}
+.h2{font-size:clamp(42px,5.2vw,76px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.h3{font-size:clamp(22px,2.8vw,36px);font-weight:700;line-height:1.2}
+.sub{font-size:clamp(17px,1.9vw,24px);color:var(--g1);line-height:1.6}
+.am{color:var(--mint)}.ab{color:var(--blue)}.aa{color:var(--amber)}.ar{color:var(--red)}
+.mono{font-family:'Space Mono',monospace}
+
+/* divider */
+.div{width:36px;height:1px;background:var(--mint);margin:18px 0}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px}
+.card:hover{border-color:var(--border-hi)}
+.gm{box-shadow:var(--gm);border-color:rgba(0,229,160,.15)!important}
+.gb{box-shadow:var(--gb);border-color:rgba(91,138,240,.15)!important}
+
+/* badge */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:100px;
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.06em}
+.b-a{background:rgba(91,138,240,.12);color:var(--blue);border:1px solid rgba(91,138,240,.25)}
+.b-b{background:rgba(0,229,160,.12);color:var(--mint);border:1px solid rgba(0,229,160,.25)}
+.b-w{background:rgba(255,158,44,.12);color:var(--amber);border:1px solid rgba(255,158,44,.25)}
+.b-r{background:rgba(255,85,85,.12);color:var(--red);border:1px solid rgba(255,85,85,.25)}
+
+/* stat pills */
+.pill{display:inline-flex;align-items:center;padding:6px 15px;border-radius:100px;
+  font-family:'Space Mono',monospace;font-size:15px;font-weight:700}
+.pu{background:rgba(0,229,160,.1);color:var(--mint)}
+.pb{background:rgba(91,138,240,.1);color:var(--blue)}
+
+/* big number */
+.bn{font-family:'Space Mono',monospace;font-weight:700;letter-spacing:-.03em;line-height:1}
+
+/* check / cross lists */
+.cl{list-style:none;display:flex;flex-direction:column;gap:0}
+.cl li{display:flex;align-items:flex-start;gap:12px;padding:11px 0;
+  border-bottom:1px solid var(--border);font-size:17px;color:var(--g1);line-height:1.55}
+.cl li:last-child{border-bottom:none}
+.cl li::before{content:'✓';color:var(--mint);font-weight:700;flex-shrink:0;margin-top:1px;font-size:16px}
+.xl li::before{content:'×';color:var(--red)}
+
+/* metric card */
+.mc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.ml{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--g2);margin-bottom:8px}
+.mv{font-family:'Space Mono',monospace;font-size:clamp(28px,3.4vw,42px);font-weight:700}
+.ms{font-size:15px;color:var(--g2);margin-top:4px}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}
+.inner{width:100%;max-width:1000px;zoom:1.38}
+
+/* chart reveal */
+.chart-wrap{opacity:0;transform:translateY(20px) scale(.98);
+  transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1)}
+.chart-wrap.reveal{opacity:1;transform:translateY(0) scale(1)}
+.chart-wrap canvas{opacity:0;transition:opacity .4s ease .15s}
+.chart-wrap.reveal canvas{opacity:1}
+.count-up{display:inline-block;min-width:1ch}
+
+/* table */
+.ct{width:100%;border-collapse:collapse;font-size:16px}
+.ct th{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--g2);padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.ct th.ha{color:var(--blue)}.ct th.hb{color:var(--mint)}
+.ct td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.ct td.r{color:var(--g2);font-size:15px}
+.ct td.va{color:var(--w);font-family:'Space Mono',monospace;font-size:15px}
+.ct td.vb{color:var(--mint);font-family:'Space Mono',monospace;font-size:15px}
+.ct tr:hover td{background:rgba(255,255,255,.02)}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%;position:relative}
+.tl::before{content:'';position:absolute;top:20px;left:12.5%;right:12.5%;height:2px;
+  background:var(--mint);box-shadow:0 0 12px rgba(0,229,160,.5)}
+.ti{display:flex;flex-direction:column;align-items:center;padding:0 10px}
+.td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1}
+.td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
+.tlab{font-size:15px;font-family:'Space Mono',monospace;color:var(--g2);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:center}
+.ttit{font-size:20px;font-weight:700;margin-bottom:8px;text-align:center}
+.ttxt{font-size:17px;color:var(--g2);line-height:1.55;text-align:center}
+
+/* integration */
+.ig{display:grid;grid-template-columns:1fr 80px 1fr;gap:16px;align-items:start;width:100%}
+.ic{display:flex;flex-direction:column;gap:6px}
+.ii{display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  font-size:11.5px;color:var(--g1);line-height:1.4}
+.idot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.icenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.ilogo{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--mint);
+  padding:8px 12px;border:1px solid rgba(0,229,160,.3);border-radius:8px;
+  background:rgba(0,229,160,.05);box-shadow:var(--gm);text-align:center;white-space:nowrap}
+
+@media(max-width:900px){
+  .slide{padding:40px 32px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .ig{grid-template-columns:1fr}
+  .tl{grid-template-columns:1fr 1fr}
+  .tl::before{display:none}
+}
+</style>
+</head>
+<body>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
+<div id="prog"></div>
+<div id="logo">СМАЙЛБОТ · ВИП-МЕД</div>
+<div id="ctr">01 / 13</div>
+
+<button class="nb" id="bp" onclick="go(-1)" aria-label="Назад">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+<button class="nb" id="bn" onclick="go(1)" aria-label="Вперёд">
+  <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+</button>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 1 · TITLE -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide active" id="s1">
+<div class="inner" style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center">
+  <div>
+    <div class="ey">Финальный расчёт · Два варианта пилота по итогам ТЗ</div>
+    <h1 class="h1">Смайл<span class="am">Бот</span></h1>
+    <div class="div"></div>
+    <p class="sub" style="max-width:400px;margin-bottom:20px">
+      Подготовлено для <strong style="color:var(--w)">ООО «ЦМТ» / «ВИП-МЕД»</strong><br>
+      Ногинск, ул. Декабристов, 3 стр.&nbsp;1
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <span class="pill pu">40 100 пациентов</span>
+      <span class="pill pu">70–80 врачей</span>
+      <span class="pill pu">15+ направлений</span>
+    </div>
+  </div>
+  <div class="card gm" style="padding:30px 32px">
+    <div class="ey">Автор предложения</div>
+    <div class="h3" style="margin-bottom:4px">Александр Джапаридзе</div>
+    <div style="font-size:13px;color:var(--g1);margin-bottom:24px">Основатель · СмайлБот · г. Ногинск, МО</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px">
+        <span class="am" style="font-size:10px;letter-spacing:.1em">TEL</span>
+        <span>+7 (968) 718-44-20</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px">
+        <span class="am" style="font-size:10px;letter-spacing:.1em">EMAIL</span>
+        <span>alexdzha89@gmail.com</span>
+      </div>
+    </div>
+    <div style="padding-top:18px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--g2);margin-bottom:4px">База клиники</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="pill pb">150–200 чел/день</span>
+        <span class="pill pb">МИС Инфоклиника</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 2 · КОНТЕКСТ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s2">
+<div class="inner">
+  <div class="ey">Исходные данные</div>
+  <h2 class="h2" style="margin-bottom:28px">Что мы поняли из вашего <span class="am">ТЗ</span></h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+    <div class="card">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:8px">Масштаб</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">40 100 пациентов · 70–80 врачей<br>15+ направлений · 150–200 чел/день</div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:8px">Юрлицо</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">ООО «Центр медицинских технологий»<br>Гендиректор подписывает договор</div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:8px">МИС и стек</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Инфоклиника · CallCenter Манго<br>MAX-рассылка · данные на рос. сервере</div>
+    </div>
+    <div class="card" style="border-color:rgba(255,85,85,.2)">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--red);text-transform:uppercase;margin-bottom:8px">Текущая боль</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Админы перегружены звонками.<br>Недозагрузка расписания ~<strong class="ar">30%</strong></div>
+    </div>
+    <div class="card" style="border-color:rgba(0,229,160,.15)">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--mint);text-transform:uppercase;margin-bottom:8px">Согласование</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Подписывает гендиректор.<br>1–2 часа в неделю на сопровождение пилота</div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:8px">Готовность к проекту</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">1–2 месяца · длительность пилота.<br>Спасибо за ТЗ в воскресенье — сигнал серьёзности</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 3 · ПРИОРИТЕТЫ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s3">
+<div class="inner">
+  <div class="ey">Основа решения</div>
+  <h2 class="h2" style="margin-bottom:28px">Ваши приоритеты из <span class="am">раздела 3</span> опросника</h2>
+  <div class="g2" style="gap:14px">
+    <div class="card" style="display:flex;gap:18px;align-items:flex-start">
+      <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--mint);opacity:.3;line-height:1;flex-shrink:0">1</div>
+      <div>
+        <div class="h3" style="margin-bottom:8px">ИИ-консультант</div>
+        <div style="font-size:13px;color:var(--g1);line-height:1.6">Снимает 60–70% нагрузки с админов. 10 повторяющихся вопросов в день: цены, подготовка к исследованиям, скидки, аппаратура, дети без родителей и т.д.</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:18px;align-items:flex-start">
+      <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--mint);opacity:.3;line-height:1;flex-shrink:0">2</div>
+      <div>
+        <div class="h3" style="margin-bottom:8px">Оптимизация расписания</div>
+        <div style="font-size:13px;color:var(--g1);line-height:1.6">Главные деньги: у вас 30% недозагрузки. Учёт длительности процедур + балансировка плотного расписания, как делают админы вручную сейчас.</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:18px;align-items:flex-start">
+      <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--blue);opacity:.3;line-height:1;flex-shrink:0">3</div>
+      <div>
+        <div class="h3" style="margin-bottom:8px">Запись 24/7</div>
+        <div style="font-size:13px;color:var(--g1);line-height:1.6">Прямо в Инфоклинику через API, без Google Sheets. Дополнительный поток обращений в нерабочее время через мессенджеры.</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:18px;align-items:flex-start">
+      <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--blue);opacity:.3;line-height:1;flex-shrink:0">4</div>
+      <div>
+        <div class="h3" style="margin-bottom:8px">Реактиватор спящих</div>
+        <div style="font-size:13px;color:var(--g1);line-height:1.6">Раз в квартал, для базы 40 100 — волнами по 2–3 тыс. Можем включить в финальную версию, не основной приоритет сейчас.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 4 · ГЛАВНЫЙ ИНСАЙТ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s4">
+<div class="inner" style="text-align:center;max-width:900px">
+  <div class="ey" style="justify-content:center;display:flex">Главный инсайт из ваших ответов</div>
+  <div style="font-size:clamp(14px,1.4vw,17px);color:var(--g1);margin-bottom:32px">
+    Недозагрузка расписания 30% — это не «потерянные пациенты».<br>Это <strong style="color:var(--w)">потерянная выручка прямо сейчас</strong>, каждый день, в текущей базе.
+  </div>
+
+  <div style="position:relative;padding:40px;margin-bottom:32px">
+    <div style="font-size:clamp(11px,1.1vw,13px);font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:8px;letter-spacing:.1em">ДОПОЛНИТЕЛЬНАЯ ВЫРУЧКА / МЕС (КОНСЕРВАТИВНО)</div>
+    <div class="bn" style="font-size:clamp(58px,7.5vw,108px);color:var(--mint);text-shadow:0 0 80px rgba(0,229,160,.4)">
+      <span class="count-up" id="revenueCount" data-target="1500000">+0 ₽</span>
+    </div>
+    <div style="font-size:14px;color:var(--g1);margin-top:8px">≈ 18 миллионов рублей в год · только с одного модуля</div>
+    <div style="position:absolute;inset:0;border-radius:20px;border:1px solid rgba(0,229,160,.1);pointer-events:none"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:left;max-width:780px;margin:0 auto">
+    <div class="mc">
+      <div class="ml">Недозагрузка</div>
+      <div class="mv">~50 слотов</div>
+      <div class="ms">в день (30% от 150–200)</div>
+    </div>
+    <div class="mc">
+      <div class="ml">Закрытие 40% из них</div>
+      <div class="mv">20 слотов</div>
+      <div class="ms">консервативный сценарий</div>
+    </div>
+    <div class="mc">
+      <div class="ml">Полное закрытие дало бы</div>
+      <div class="mv am">+37 млн ₽</div>
+      <div class="ms">в год — потолок возможного</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 5 · ОПЦИЯ А — ЧТО ВХОДИТ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s5">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <span class="badge b-a">ОПЦИЯ А</span>
+    <span class="badge b-w">ЛАЙТ ПИЛОТ</span>
+  </div>
+  <div class="ey">В рамках бюджета · 2 главных приоритета из 4</div>
+
+  <div class="g2" style="gap:28px;align-items:start">
+    <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div class="mc gb">
+          <div class="ml">Стоимость внедрения</div>
+          <div class="mv ab">200 000 ₽</div>
+          <div class="ms">4–6 недель от подписания</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Ежемесячная плата</div>
+          <div class="mv ab">45 000 ₽</div>
+          <div class="ms">Окупаемость: 1–2 мес.</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.6;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:10px">
+        Закрывает 2 главных приоритета: ИИ-консультант и базовую оптимизацию расписания. Хороший старт с минимальными рисками.
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:12px">Что входит</div>
+      <ul class="cl">
+        <li>ИИ-консультант на GigaChat для типовых вопросов (10 категорий из вашего списка)</li>
+        <li>Работа в текущем канале MAX поверх существующей переписки с админами</li>
+        <li>Справочник длительности процедур + умное предложение слотов</li>
+        <li>Базовая интеграция с Инфоклиникой (чтение справочников, запись заявок)</li>
+        <li>Обучение администраторов + техподдержка в течение MRR</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 6 · ОПЦИЯ А — ОГРАНИЧЕНИЯ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s6">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <span class="badge b-a">ОПЦИЯ А</span>
+    <span class="badge b-r">ОГРАНИЧЕНИЯ</span>
+  </div>
+  <div class="ey">Честно показываем, чего нет в Лайте</div>
+  <div class="g2" style="gap:14px">
+    <div class="card" style="border-color:rgba(255,85,85,.15)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="color:var(--red);font-size:18px">×</span>
+        <div class="h3" style="font-size:15px">Реактиватор базы 40 100</div>
+      </div>
+      <div style="font-size:12px;color:var(--g2);font-family:'Space Mono',monospace;margin-bottom:8px">Упущенный эффект: ~1,1 млн ₽/мес</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Возврат спящих пациентов через персональные сообщения — самый «жирный» модуль по выручке. В Лайте недоступен.</div>
+    </div>
+    <div class="card" style="border-color:rgba(255,85,85,.15)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="color:var(--red);font-size:18px">×</span>
+        <div class="h3" style="font-size:15px">Полный модуль расписания</div>
+      </div>
+      <div style="font-size:12px;color:var(--g2);font-family:'Space Mono',monospace;margin-bottom:8px">Закрывается ~40% потенциала недозагрузки вместо 80%</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">В Лайте — только справочник длительности. Без автозакрытия отмен, листа ожидания, балансировки врачей, прогноза no-show.</div>
+    </div>
+    <div class="card" style="border-color:rgba(255,85,85,.15)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="color:var(--red);font-size:18px">×</span>
+        <div class="h3" style="font-size:15px">Запись 24/7 через VK и сайт</div>
+      </div>
+      <div style="font-size:12px;color:var(--g2);font-family:'Space Mono',monospace;margin-bottom:8px">Упускаем дополнительные каналы привлечения</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">В Лайте работает только в MAX. VK и виджет на сайт — не входят в базовый пакет.</div>
+    </div>
+    <div class="card" style="border-color:rgba(255,85,85,.15)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="color:var(--red);font-size:18px">×</span>
+        <div class="h3" style="font-size:15px">Глубокая интеграция с МИС</div>
+      </div>
+      <div style="font-size:12px;color:var(--g2);font-family:'Space Mono',monospace;margin-bottom:8px">Часть работы остаётся на администраторах</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">В Лайте — базовое API (чтение справочников и запись заявок). Без двусторонней синхронизации статусов.</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding:12px 16px;border-radius:8px;background:rgba(255,158,44,.07);border:1px solid rgba(255,158,44,.2);font-size:12px;color:var(--amber)">
+    ★ Этот функционал можно добавить через 3–6 мес. эксплуатации Лайта как апсейл-пакет
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 7 · ОПЦИЯ Б — ПОЛНЫЙ ПИЛОТ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s7">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <span class="badge b-b">ОПЦИЯ Б</span>
+    <span class="badge b-b">★ РЕКОМЕНДОВАНО</span>
+  </div>
+  <div class="ey">Все 4 приоритета из ТЗ · Реалистичный KPI +50% к потоку</div>
+
+  <div class="g2" style="gap:28px;align-items:start">
+    <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div class="mc gm">
+          <div class="ml">Стоимость внедрения</div>
+          <div class="mv am">550 000 ₽</div>
+          <div class="ms">6–10 недель от подписания</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Ежемесячная плата</div>
+          <div class="mv am">70 000 ₽</div>
+          <div class="ms">Окупаемость: <strong class="am">2–3 недели</strong></div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.6;padding:16px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.12);border-radius:10px">
+        Разница в цене с Опцией А — в 2,5 раза. Но эффект в 4–6 раз больше. Полный пилот даёт реалистичный KPI <strong class="am">+50% к потоку</strong>.
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:12px">Что входит</div>
+      <ul class="cl">
+        <li>ИИ-консультант с базой знаний по всем 15+ направлениям клиники</li>
+        <li>Полный модуль расписания: длительность + автозакрытие отмен + лист ожидания</li>
+        <li>Запись 24/7 через MAX + VK + виджет на сайт прямо в Инфоклинику</li>
+        <li>Реактиватор базы 40 100 — раз в квартал, волнами с персональной ИИ-генерацией</li>
+        <li>Глубокая двусторонняя интеграция с Инфоклиникой через API</li>
+        <li>Балансировка нагрузки между врачами + индивидуальные нормативы времени</li>
+        <li>Обучение администраторов, техподдержка, доработки в течение MRR</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 8 · ИНТЕГРАЦИЯ С ИНФОКЛИНИКОЙ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s8">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <span class="badge b-b">ОПЦИЯ Б</span>
+    <span class="badge b-b">ТЕХНИЧЕСКАЯ ГЛУБИНА</span>
+  </div>
+  <div class="ey">Полный пилот · Двусторонняя интеграция с МИС без ручных переносов</div>
+
+  <div class="ig" style="margin-bottom:16px">
+    <div>
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--blue);text-transform:uppercase;margin-bottom:10px;text-align:center">СмайлБот ← Инфоклиника<br><span style="color:var(--g2)">(чтение данных из МИС)</span></div>
+      <div class="ic">
+        <div class="ii"><div class="idot" style="background:var(--blue)"></div>Расписание врачей в реальном времени</div>
+        <div class="ii"><div class="idot" style="background:var(--blue)"></div>Справочники услуг и длительности процедур</div>
+        <div class="ii"><div class="idot" style="background:var(--blue)"></div>База пациентов 40 100 — для реактиватора</div>
+        <div class="ii"><div class="idot" style="background:var(--blue)"></div>Прайс-листы по 15+ направлениям</div>
+        <div class="ii"><div class="idot" style="background:var(--blue)"></div>Статусы записей (подтверждена / отменена)</div>
+      </div>
+    </div>
+    <div class="icenter">
+      <div class="ilogo">СМАЙЛ<br>БОТ</div>
+      <svg width="24" height="40" viewBox="0 0 24 40" fill="none">
+        <path d="M12 0 L12 40" stroke="rgba(0,229,160,0.3)" stroke-width="1" stroke-dasharray="3 3"/>
+        <polyline points="6,10 12,2 18,10" stroke="var(--blue)" stroke-width="1.5" fill="none"/>
+        <polyline points="6,30 12,38 18,30" stroke="var(--mint)" stroke-width="1.5" fill="none"/>
+      </svg>
+    </div>
+    <div>
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--mint);text-transform:uppercase;margin-bottom:10px;text-align:center">СмайлБот → Инфоклиника<br><span style="color:var(--g2)">(запись данных в МИС)</span></div>
+      <div class="ic">
+        <div class="ii"><div class="idot" style="background:var(--mint)"></div>Новые заявки на запись от пациентов</div>
+        <div class="ii"><div class="idot" style="background:var(--mint)"></div>Подтверждения визитов и отмены от бота</div>
+        <div class="ii"><div class="idot" style="background:var(--mint)"></div>Лист ожидания (новая сущность в МИС)</div>
+        <div class="ii"><div class="idot" style="background:var(--mint)"></div>История взаимодействий с пациентом</div>
+        <div class="ii"><div class="idot" style="background:var(--mint)"></div>Согласия на коммуникацию (для реактиватора)</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 16px;border-radius:8px;background:rgba(255,158,44,.07);border:1px solid rgba(255,158,44,.2);font-size:12px;color:var(--amber)">
+    Учтено: в Инфоклинике нет привязки к кабинетам — выбор кабинета остаётся за администратором. Модуль «свободное оборудование сейчас» — опционально на 3-м месяце.
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 9 · СРАВНЕНИЕ А И Б -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s9">
+<div class="inner">
+  <div class="ey">Один взгляд — и понятно, что выбирать</div>
+  <h2 class="h2" style="margin-bottom:24px">Сравнение <span class="ab">Опции А</span> и <span class="am">Опции Б</span></h2>
+  <div class="g2" style="gap:28px;align-items:start">
+    <div>
+      <table class="ct">
+        <thead>
+          <tr>
+            <th>Показатель</th>
+            <th class="ha">Опция А</th>
+            <th class="hb">Опция Б ★</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="r">Внедрение</td><td class="va">200 000 ₽</td><td class="vb">550 000 ₽</td></tr>
+          <tr><td class="r">MRR</td><td class="va">45 000 ₽</td><td class="vb">70 000 ₽</td></tr>
+          <tr><td class="r">Срок</td><td class="va">4–6 нед.</td><td class="vb">6–10 нед.</td></tr>
+          <tr><td class="r">Модули из ТЗ</td><td class="va">2 из 4</td><td class="vb">4 из 4</td></tr>
+          <tr><td class="r">Каналы записи</td><td class="va">MAX</td><td class="vb">MAX+VK+сайт</td></tr>
+          <tr><td class="r">Интеграция МИС</td><td class="va">Базовая</td><td class="vb">Полная двустор.</td></tr>
+          <tr><td class="r">Реактиватор 40 100</td><td class="va" style="color:var(--red)">—</td><td class="vb">Входит</td></tr>
+          <tr><td class="r">Лист ожидания</td><td class="va" style="color:var(--red)">—</td><td class="vb">Входит</td></tr>
+          <tr><td class="r">Окупаемость</td><td class="va">1–2 мес.</td><td class="vb">2–3 недели</td></tr>
+          <tr><td class="r">Эффект в мес.</td><td class="va">~500 тыс. ₽</td><td class="vb">~1,9 млн ₽</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:4px">Месячный эффект, тыс. ₽</div>
+      <div class="chart-wrap" id="wrapCompare" style="position:relative;height:240px"><canvas id="chartCompare"></canvas></div>
+      <div style="padding:14px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.15);border-radius:10px">
+        <div style="font-size:11px;font-family:'Space Mono',monospace;color:var(--g2);margin-bottom:6px">ГЛАВНОЕ</div>
+        <div style="font-size:13px;color:var(--g1);line-height:1.5">Разница в цене в <strong class="am">2,5 раза</strong> — эффект в <strong class="am">4–6 раз</strong> больше. Полный пилот даёт реалистичный KPI +50% к потоку.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 10 · ДОПУЩЕНИЯ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s10">
+<div class="inner">
+  <div class="ey">Прозрачность модели</div>
+  <h2 class="h2" style="margin-bottom:24px">Допущения <span class="am">расчёта</span></h2>
+  <div class="g2" style="gap:20px">
+    <div>
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:12px">Исходные данные из ТЗ</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="display:flex;flex-direction:column">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">База пациентов</span><span class="mono" style="color:var(--w)">40 100 чел.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Поток в день</span><span class="mono" style="color:var(--w)">150–200 приёмов</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Недозагрузка расписания</span><span class="mono ar">30%</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Чек первичного приёма</span><span class="mono" style="color:var(--w)">2 600 ₽</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Чек диагностики (МРТ/КТ/УЗИ)</span><span class="mono" style="color:var(--w)">5 500 ₽</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;font-size:12.5px">
+            <span style="color:var(--g1)">Админов в смене</span><span class="mono" style="color:var(--w)">5–6 чел.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.15em;color:var(--g2);text-transform:uppercase;margin-bottom:12px">Наши коэффициенты для модели</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="display:flex;flex-direction:column">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Средневзвешенный чек</span><span class="mono am">4 000 ₽</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Рабочих дней в месяц</span><span class="mono am">22 дня</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Конверсия закрытия слота (Лайт)</span><span class="mono am">30–35%</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Конверсия записи (Полный)</span><span class="mono am">50–65%</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px">
+            <span style="color:var(--g1)">Реактиватор: размер волны</span><span class="mono am">2 500 чел.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:11px 16px;font-size:12.5px">
+            <span style="color:var(--g1)">Конверсия возврата (ИИ-сообщение)</span><span class="mono am">8%</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:11.5px;color:var(--g2);line-height:1.5">
+        Источники: Клиника Доктора Фомина (69% конверсии в ответ), МЕДСИ, ВкоМПП, BotHelp — нижняя граница по рынку РФ.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 11 · ROI -->
+<!-- ══════════════════════════════════════════════════════ -->
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:500;display:none"></canvas>
+
+<section class="slide" id="s11">
+<div class="inner" style="max-width:1200px">
+  <div class="ey">Каждая строка — открытая формула. Можно проверить.</div>
+  <h2 class="h2" style="margin-bottom:16px">Возврат <span class="am">инвестиций</span></h2>
+
+  <!-- top: two breakdown columns -->
+  <div class="g2" style="gap:16px;align-items:start;margin-bottom:16px">
+    <!-- COL A -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span class="badge b-a">ОПЦИЯ А · ЛАЙТ</span>
+        <span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--blue)">500 000 ₽/мес</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="roi-row" data-val="150" data-max="1922" data-col="blue" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">РАЗГРУЗКА АДМИНОВ</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">150 000 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .2s ease-out" class="bar-fill"></div></div>
+        </div>
+        <div class="roi-row" data-val="300" data-max="1922" data-col="blue" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">ОПТИМИЗАЦИЯ РАСПИСАНИЯ</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">300 000 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .4s ease-out" class="bar-fill"></div></div>
+        </div>
+        <div class="roi-row" data-val="50" data-max="1922" data-col="blue" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">ЗАПИСЬ ЧЕРЕЗ MAX</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">50 000 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width 1s .6s ease-out" class="bar-fill"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding:10px 14px;background:rgba(91,138,240,.08);border:1px solid rgba(91,138,240,.2);border-radius:10px;display:flex;justify-content:space-between">
+        <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--blue)">≈ 6 млн ₽ в год</span>
+        <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--blue)">×2,5 к вложениям</span>
+      </div>
+    </div>
+    <!-- COL B -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span class="badge b-b">ОПЦИЯ Б · ПОЛНЫЙ ★</span>
+        <span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--mint)">1 922 500 ₽/мес</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="roi-row" data-val="200" data-max="1922" data-col="mint" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">РАЗГРУЗКА АДМИНОВ +</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">200 000 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .2s ease-out" class="bar-fill"></div></div>
+        </div>
+        <div class="roi-row" data-val="1100" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">ПОЛНАЯ ОПТИМИЗАЦИЯ ★</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">1 100 000 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .4s ease-out" class="bar-fill"></div></div>
+        </div>
+        <div class="roi-row" data-val="293" data-max="1922" data-col="mint" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--g2)">ЗАПИСЬ MAX+VK+САЙТ</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--w)">292 500 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .6s ease-out" class="bar-fill"></div></div>
+        </div>
+        <div class="roi-row" data-val="330" data-max="1922" data-col="mint" style="padding:10px 14px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;cursor:pointer;transition:border-color .2s">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">РЕАКТИВАТОР 40 100 ★</span>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--mint)">330 000 ₽</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:100%;width:0%;background:var(--mint);border-radius:2px;transition:width 1s .8s ease-out" class="bar-fill"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding:10px 14px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:10px;display:flex;justify-content:space-between;box-shadow:var(--gm)">
+        <span style="font-size:12px;font-family:'Space Mono',monospace;color:var(--mint)">≈ 23 млн ₽ в год</span>
+        <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--mint)">×3,1 к вложениям</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom: chart -->
+  <div class="chart-wrap" id="wrapRoi" style="position:relative;height:150px;width:100%">
+    <canvas id="roiChart"></canvas>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 12 · ПЛАН ВНЕДРЕНИЯ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s12">
+<div class="inner">
+  <div class="ey">Поэтапно · KPI оцениваем на 6-й неделе</div>
+  <h2 class="h2" style="margin-bottom:36px">План <span class="am">внедрения</span></h2>
+  <div class="tl">
+    <div class="ti">
+      <div class="td on">1–2</div>
+      <div class="tlab">Недели 1–2</div>
+      <div class="ttit">Запуск</div>
+      <div class="ttxt">Подписание договора. Предоставление доступов к Инфоклинике и MAX. Базовая настройка ИИ-консультанта.</div>
+    </div>
+    <div class="ti">
+      <div class="td on">3–4</div>
+      <div class="tlab">Недели 3–4</div>
+      <div class="ttit">Интеграция</div>
+      <div class="ttxt">Подключение к Инфоклинике (читаем расписание и базу). Загрузка базы знаний по 15 направлениям.</div>
+    </div>
+    <div class="ti">
+      <div class="td on">5–6</div>
+      <div class="tlab">Недели 5–6</div>
+      <div class="ttit">Тестирование</div>
+      <div class="ttxt">Тестовая эксплуатация на узкой группе. Сбор обратной связи, доработки. Промежуточный отчёт.</div>
+    </div>
+    <div class="ti">
+      <div class="td off">7+</div>
+      <div class="tlab">Неделя 7+</div>
+      <div class="ttit">Полный запуск</div>
+      <div class="ttxt">В Опции Б — реактиватор, лист ожидания. В Опции А — полная эксплуатация. Замер KPI.</div>
+    </div>
+  </div>
+  <div style="margin-top:36px;padding:16px 20px;background:rgba(255,158,44,.07);border:1px solid rgba(255,158,44,.2);border-radius:10px;font-size:13px;color:var(--amber);max-width:780px;margin-left:auto;margin-right:auto">
+    <strong>Важно про KPI:</strong> ориентир «+50% к потоку и прибыли» реалистичен только для Опции Б, и измеряется через 3–4 месяца после запуска — нужно время на полный цикл реактиватора.
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 13 · ЧТО ДАЛЬШЕ -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="slide" id="s13">
+<div class="inner" style="text-align:center;max-width:800px">
+  <div class="ey" style="display:flex;justify-content:center">Следующий шаг</div>
+  <h2 class="h2" style="margin-bottom:32px">Что <span class="am">дальше</span></h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-bottom:32px">
+    <div class="card" style="display:flex;gap:14px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">1</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Обсуждаем выбор опции — А или Б</div>
+    </div>
+    <div class="card" style="display:flex;gap:14px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">2</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Уточняем API Инфоклиники, прайс в едином файле, тон коммуникации</div>
+    </div>
+    <div class="card" style="display:flex;gap:14px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">3</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5">Согласуем итоговые KPI и сроки замера</div>
+    </div>
+    <div class="card gm" style="display:flex;gap:14px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--mint);flex-shrink:0">4</div>
+      <div style="font-size:13px;color:var(--g1);line-height:1.5"><strong style="color:var(--mint)">Подписываем договор</strong> — старт работ в течение недели</div>
+    </div>
+  </div>
+
+  <div class="card" style="display:inline-flex;flex-direction:column;gap:12px;padding:28px 40px;text-align:center">
+    <div style="font-size:18px;font-weight:700">Александр Джапаридзе</div>
+    <div style="font-size:13px;color:var(--g1)">Основатель · СмайлБот</div>
+    <div style="width:100%;height:1px;background:var(--border)"></div>
+    <div style="display:flex;gap:24px;justify-content:center">
+      <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">TEL</span>&nbsp; +7 (968) 718-44-20</div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px"><span class="am">EMAIL</span>&nbsp; alexdzha89@gmail.com</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+const TOTAL = 13;
+let cur = 1;
+const chartStore = {};
+let roiHoverBound = false;
+let confettiPlayed = false;
+
+const chartAnim = {
+  duration: 1100,
+  easing: 'easeOutQuart',
+  delay(ctx) {
+    if (ctx.type !== 'data') return 0;
+    return ctx.dataIndex * 130 + ctx.datasetIndex * 90;
+  }
+};
+
+function destroyChart(key) {
+  if (chartStore[key]) {
+    chartStore[key].destroy();
+    delete chartStore[key];
+  }
+}
+
+function revealWrap(id) {
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  wrap.classList.remove('reveal');
+  void wrap.offsetWidth;
+  requestAnimationFrame(() => wrap.classList.add('reveal'));
+}
+
+function animateCount(el, target, duration = 1400) {
+  if (!el) return;
+  const start = performance.now();
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  function frame(now) {
+    const p = Math.min(1, (now - start) / duration);
+    const val = Math.round(target * ease(p));
+    el.textContent = '+' + val.toLocaleString('ru-RU') + ' ₽';
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function updateUI() {
+  document.querySelectorAll('.slide').forEach((s, i) => {
+    s.classList.remove('active', 'out');
+    if (i + 1 === cur) s.classList.add('active');
+  });
+  document.getElementById('prog').style.width = ((cur / TOTAL) * 100) + '%';
+  document.getElementById('ctr').textContent =
+    String(cur).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+  initSlideMotion(cur);
+}
+
+function go(dir) {
+  const next = Math.max(1, Math.min(TOTAL, cur + dir));
+  if (next === cur) return;
+  const current = document.getElementById('s' + cur);
+  current.classList.add('out');
+  setTimeout(() => current.classList.remove('out'), 600);
+  cur = next;
+  updateUI();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+});
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const symbols = ['₽', '₽', '₽', '₽', '💰', '💵', '🪙', '💸'];
+  const colors = ['#00E5A0', '#FFD700', '#5B8AF0', '#fff', '#FF9E2C', '#00E5A0'];
+  const pts = Array.from({ length: 90 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -Math.random() * canvas.height * 0.6,
+    vx: (Math.random() - 0.5) * 4,
+    vy: 2.5 + Math.random() * 4,
+    sym: symbols[Math.floor(Math.random() * symbols.length)],
+    sz: 16 + Math.random() * 22,
+    rot: Math.random() * Math.PI * 2,
+    rv: (Math.random() - 0.5) * 0.18,
+    op: 0.85 + Math.random() * 0.15,
+    col: colors[Math.floor(Math.random() * colors.length)]
+  }));
+  let f = 0;
+  const max = 220;
+  function tick() {
+    if (f >= max) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+      return;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pts.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.rv;
+      if (f > max - 70) p.op = Math.max(0, p.op - 0.012);
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = p.op;
+      ctx.fillStyle = p.col;
+      ctx.font = `${p.sz}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.sym, 0, 0);
+      ctx.restore();
+    });
+    f++;
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function bindRoiHover() {
+  if (roiHoverBound) return;
+  roiHoverBound = true;
+  document.querySelectorAll('#s11 .roi-row').forEach(row => {
+    row.addEventListener('mouseenter', () => {
+      row.style.borderColor = row.dataset.col === 'mint' ? 'rgba(0,229,160,.5)' : 'rgba(91,138,240,.5)';
+      row.style.background = row.dataset.col === 'mint' ? 'rgba(0,229,160,.2)' : 'rgba(91,138,240,.2)';
+    });
+    row.addEventListener('mouseleave', () => {
+      row.style.borderColor = '';
+      row.style.background = '';
+    });
+  });
+}
+
+function animateROIBars() {
+  document.querySelectorAll('#s11 .roi-row').forEach((row, i) => {
+    const val = +row.dataset.val;
+    const max = +row.dataset.max;
+    const pct = Math.round((val / max) * 100);
+    const bar = row.querySelector('.bar-fill');
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => {
+      bar.style.transition = `width 1s ${0.15 + i * 0.12}s cubic-bezier(.4,0,.2,1)`;
+      bar.style.width = pct + '%';
+    });
+  });
+  bindRoiHover();
+}
+
+function buildCompareChart() {
+  destroyChart('compare');
+  revealWrap('wrapCompare');
+  chartStore.compare = new Chart(document.getElementById('chartCompare'), {
+    type: 'bar',
+    data: {
+      labels: ['Разгрузка\nадминов', 'Оптимизация\nрасписания', 'Запись\nв мессенджерах', 'Реактиватор'],
+      datasets: [
+        {
+          label: 'Опция А',
+          data: [150, 300, 50, 0],
+          backgroundColor: 'rgba(91,138,240,.65)',
+          borderColor: '#5B8AF0',
+          borderWidth: 1,
+          borderRadius: 6
+        },
+        {
+          label: 'Опция Б',
+          data: [200, 1100, 292, 330],
+          backgroundColor: 'rgba(0,229,160,.65)',
+          borderColor: '#00E5A0',
+          borderWidth: 1,
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: chartAnim,
+      plugins: {
+        legend: { labels: { color: '#888', boxWidth: 12, padding: 14, font: { size: 12 } } },
+        tooltip: {
+          backgroundColor: '#111',
+          borderColor: '#333',
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс. ₽'
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#666', maxRotation: 0, font: { size: 11 } } },
+        y: { grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#666', callback: v => v + 'к', font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function buildRoiChart() {
+  destroyChart('roi');
+  revealWrap('wrapRoi');
+  animateROIBars();
+  if (!confettiPlayed) {
+    confettiPlayed = true;
+    setTimeout(launchConfetti, 500);
+  }
+  chartStore.roi = new Chart(document.getElementById('roiChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Разгрузка\nадминов', 'Оптимизация\nрасписания', 'Запись', 'Реактиватор', 'ИТОГО'],
+      datasets: [
+        {
+          label: 'Опция А (тыс. ₽)',
+          data: [150, 300, 50, 0, 500],
+          backgroundColor: [
+            'rgba(91,138,240,.5)', 'rgba(91,138,240,.5)', 'rgba(91,138,240,.5)',
+            'rgba(91,138,240,.1)', 'rgba(91,138,240,.85)'
+          ],
+          borderColor: '#5B8AF0',
+          borderWidth: 1,
+          borderRadius: 6
+        },
+        {
+          label: 'Опция Б (тыс. ₽)',
+          data: [200, 1100, 293, 330, 1923],
+          backgroundColor: [
+            'rgba(0,229,160,.5)', 'rgba(0,229,160,.5)', 'rgba(0,229,160,.5)',
+            'rgba(0,229,160,.5)', 'rgba(0,229,160,.9)'
+          ],
+          borderColor: '#00E5A0',
+          borderWidth: 1,
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: chartAnim,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#777', boxWidth: 12, padding: 12, font: { size: 11 } } },
+        tooltip: {
+          backgroundColor: '#111',
+          borderColor: '#222',
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('ru-RU') + ' тыс. ₽'
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,.03)' }, ticks: { color: '#666', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(255,255,255,.03)' }, ticks: { color: '#666', callback: v => v + 'к', font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function initSlideMotion(n) {
+  if (n === 4) {
+    const el = document.getElementById('revenueCount');
+    if (el) animateCount(el, +el.dataset.target);
+  }
+  if (n === 9) setTimeout(buildCompareChart, 280);
+  if (n === 11) setTimeout(buildRoiChart, 280);
+}
+
+Chart.defaults.color = '#666';
+Chart.defaults.font.family = "'Space Mono', monospace";
+Chart.defaults.font.size = 11;
+
+updateUI();
+</script>
+</body>
+</html>
