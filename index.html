@@ -957,8 +957,9 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
 </section>
 
 <script>
-const TOTAL = 14;
 const ROI_SLIDE = 12;
+const COMPARE_SLIDE = 10;
+const REVENUE_SLIDE = 5;
 let cur = 1;
 const chartStore = {};
 let roiHoverBound = false;
@@ -1002,24 +1003,38 @@ function animateCount(el, target, duration = 1400) {
   requestAnimationFrame(frame);
 }
 
+function getSlides() {
+  return Array.from(document.querySelectorAll('.slide'));
+}
+
+function slideTotal() {
+  return getSlides().length;
+}
+
 function updateUI() {
-  document.querySelectorAll('.slide').forEach((s, i) => {
+  const slides = getSlides();
+  const total = slides.length;
+  slides.forEach((s, i) => {
     s.classList.remove('active', 'out');
     if (i + 1 === cur) s.classList.add('active');
   });
-  document.getElementById('prog').style.width = ((cur / TOTAL) * 100) + '%';
+  document.getElementById('prog').style.width = ((cur / total) * 100) + '%';
   document.getElementById('ctr').textContent =
-    String(cur).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+    String(cur).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
   if (cur !== ROI_SLIDE) stopConfetti();
   initSlideMotion(cur);
 }
 
 function go(dir) {
-  const next = Math.max(1, Math.min(TOTAL, cur + dir));
+  const total = slideTotal();
+  const next = Math.max(1, Math.min(total, cur + dir));
   if (next === cur) return;
-  const current = document.getElementById('s' + cur);
-  current.classList.add('out');
-  setTimeout(() => current.classList.remove('out'), 600);
+  const slides = getSlides();
+  const current = slides[cur - 1];
+  if (current) {
+    current.classList.add('out');
+    setTimeout(() => current.classList.remove('out'), 600);
+  }
   cur = next;
   updateUI();
 }
@@ -1240,11 +1255,11 @@ function buildRoiChart() {
 }
 
 function initSlideMotion(n) {
-  if (n === 5) {
+  if (n === REVENUE_SLIDE) {
     const el = document.getElementById('revenueCount');
     if (el) animateCount(el, +el.dataset.target);
   }
-  if (n === 9) setTimeout(buildCompareChart, 280);
+  if (n === COMPARE_SLIDE) setTimeout(buildCompareChart, 280);
   if (n === ROI_SLIDE) {
     setTimeout(buildRoiChart, 280);
     confettiTimer = setTimeout(launchConfetti, 500);
