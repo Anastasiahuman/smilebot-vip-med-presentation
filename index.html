@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>СмайлБот · Финальный расчёт · ВИП-МЕД</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -159,14 +162,12 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
 .ct tr:hover td{background:rgba(15,23,42,.03)}
 
 /* timeline */
-.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%}
-.ti{display:flex;flex-direction:column;align-items:center;padding:0 10px;position:relative}
-.tl-node{display:flex;justify-content:center;align-items:center;width:100%;height:42px;margin-bottom:14px}
-.ti:not(:last-child)::after{content:'';position:absolute;top:21px;left:calc(50% + 21px);
-  width:calc(100% - 42px);height:2px;transform:translateY(-50%);
-  background:var(--mint);z-index:0;pointer-events:none}
+.tl{width:100%}
+.tl-row{display:flex;align-items:flex-start}
+.tl-row>.ti{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 8px;min-width:0}
+.tl-bar{flex:1;height:2px;background:var(--mint);margin-top:21px;min-width:12px;align-self:flex-start}
 .td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;position:relative;z-index:1;
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;margin-bottom:14px;
   background:var(--card);box-sizing:border-box}
 .td.on,.td.off{border:2px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
 .tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
@@ -232,8 +233,9 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
   .g2,.g3,.g4,.slide-s9-grid{grid-template-columns:1fr!important}
   .ig{grid-template-columns:1fr;gap:12px}
   .icenter{flex-direction:row;justify-content:center;padding:8px 0}
-  .tl{grid-template-columns:1fr 1fr;gap:20px}
-  .ti:not(:last-child)::after{display:none}
+  .tl-row{flex-wrap:wrap}
+  .tl-bar{display:none}
+  .tl-row>.ti{flex:1 1 45%;min-width:200px}
   .slide-s1-grid{grid-template-columns:1fr!important;gap:28px!important}
   .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
   .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -258,8 +260,8 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
   :root{--inner-max:100%;--slide-pad-y:28px;--slide-pad-x:max(20px,env(safe-area-inset-left))}
   .h1{font-size:clamp(30px,9vw,44px)}
   .h2{font-size:clamp(24px,7vw,36px)}
-  .grid-3,.agents,.tl{grid-template-columns:1fr}
-  .ti:not(:last-child)::after{display:none}
+  .grid-3,.agents{grid-template-columns:1fr}
+  .tl-row>.ti{flex:1 1 100%}
   .slide-s1-grid{grid-template-columns:1fr!important}
 }
 </style>
@@ -890,25 +892,25 @@ a.contact-link:hover{color:var(--mint);text-decoration-color:var(--mint)}
   <h2 class="h2" style="margin-bottom:36px">План <span class="am">внедрения</span></h2>
   <div class="tl">
     <div class="ti">
-      <div class="tl-node"><div class="td on">1–2</div></div>
+      <div class="tl-node"><div class="td on">1–2</motion.div></div>
       <div class="tlab">Недели 1–2</div>
       <div class="ttit">Запуск</div>
       <div class="ttxt">Подписание договора. Предоставление доступов к Инфоклинике и MAX. Базовая настройка ИИ-консультанта.</div>
     </div>
     <div class="ti">
-      <div class="tl-node"><div class="td on">3–4</div></div>
+      <motion.div class="tl-node"><div class="td on">3–4</div></motion.div>
       <div class="tlab">Недели 3–4</div>
       <div class="ttit">Интеграция</div>
       <div class="ttxt">Подключение к Инфоклинике (читаем расписание и базу). Загрузка базы знаний по 15 направлениям.</div>
     </div>
     <div class="ti">
-      <div class="tl-node"><div class="td on">5–6</div></div>
+      <div class="td on">5–6</div>
       <div class="tlab">Недели 5–6</div>
       <div class="ttit">Тестирование</div>
       <div class="ttxt">Тестовая эксплуатация на узкой группе. Сбор обратной связи, доработки. Промежуточный отчёт.</div>
     </div>
     <div class="ti">
-      <div class="tl-node"><div class="td off">7+</div></div>
+      <div class="td off">7+</div>
       <div class="tlab">Неделя 7+</div>
       <div class="ttit">Полный запуск</div>
       <div class="ttxt">В Опции Б — реактиватор, лист ожидания. В Опции А — полная эксплуатация. Замер KPI.</div>
