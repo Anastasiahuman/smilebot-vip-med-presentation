@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СмайлБот · Этапы внедрения · ВИП-МЕД</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f6;--card:#fff;--card-hi:#fff;
+  --border:rgba(15,23,42,.1);--border-hi:rgba(15,23,42,.16);
+  --mint:#00a870;--blue:#3d6fd4;--amber:#d97706;--red:#dc2626;
+  --w:#0f172a;--g1:#334155;--g2:#64748b;--g3:#e2e8f0;
+  --gm:0 8px 32px rgba(0,168,112,.14);
+  --gb:0 8px 32px rgba(61,111,212,.14);
+  --ga:0 8px 32px rgba(217,119,6,.12);
+  --chart-grid:rgba(15,23,42,.06);
+  --inner-max:960px;--slide-pad-y:56px;--slide-pad-x:72px;
+}
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:var(--w);
+  font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E")}
+
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none}
+.o1{width:700px;height:700px;background:var(--mint);top:-250px;right:-200px}
+.o2{width:500px;height:500px;background:var(--blue);bottom:-200px;left:-150px}
+.o3{width:300px;height:300px;background:var(--amber);top:50%;left:50%;transform:translate(-50%,-50%);opacity:.03}
+
+/* progress */
+#prog{position:fixed;top:0;left:0;height:1px;background:var(--mint);
+  box-shadow:0 0 8px var(--mint);transition:width .5s cubic-bezier(.4,0,.2,1);z-index:1000}
+
+/* logo + counter */
+#logo{position:fixed;top:26px;left:36px;font-family:'Space Mono',monospace;font-size:10px;
+  letter-spacing:.18em;color:var(--g2);z-index:1000}
+#ctr{position:fixed;bottom:26px;right:36px;font-family:'Space Mono',monospace;font-size:10px;
+  color:var(--g2);letter-spacing:.12em;z-index:1000}
+
+/* nav */
+.nb{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;
+  border:1px solid var(--border);background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(15,23,42,.08);
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--g2);opacity:0;transition:opacity .3s,border-color .3s,color .3s;z-index:1000}
+body:hover .nb{opacity:1}
+.nb:hover{border-color:var(--mint);color:var(--mint)}
+#bp{left:18px}#bn{right:18px}
+.nb svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+
+/* slides */
+.slide{position:fixed;inset:0;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;padding:var(--slide-pad-y) var(--slide-pad-x);
+  opacity:0;transform:translateY(22px);pointer-events:none;
+  transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);
+  overflow:hidden}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide.out{opacity:0;transform:translateY(-22px)}
+
+/* typography */
+.ey{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.22em;
+  color:var(--g2);text-transform:uppercase;margin-bottom:16px}
+.h1{font-size:clamp(48px,6.2vw,88px);font-weight:800;letter-spacing:-.025em;line-height:1}
+.h2{font-size:clamp(34px,4.2vw,64px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.h3{font-size:clamp(18px,2.3vw,30px);font-weight:700;line-height:1.2}
+.sub{font-size:clamp(15px,1.6vw,20px);color:var(--g1);line-height:1.6}
+a.contact-link{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,229,160,.35);
+  transition:color .2s,border-color .2s}
+a.contact-link:hover{color:var(--mint);border-color:var(--mint)}
+.am{color:var(--mint)}.ab{color:var(--blue)}.aa{color:var(--amber)}.ar{color:var(--red)}
+.mono{font-family:'Space Mono',monospace}
+
+/* divider */
+.div{width:36px;height:1px;background:var(--mint);margin:18px 0}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px}
+.card:hover{border-color:var(--border-hi)}
+.card.gm,.mc.gm{box-shadow:var(--gm);border-color:rgba(0,168,112,.28)!important}
+.card.gb,.mc.gb{box-shadow:var(--gb);border-color:rgba(61,111,212,.28)!important}
+
+/* badge */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em}
+.b-a{background:rgba(91,138,240,.12);color:var(--blue);border:1px solid rgba(91,138,240,.25)}
+.b-b{background:rgba(0,229,160,.12);color:var(--mint);border:1px solid rgba(0,229,160,.25)}
+.b-w{background:rgba(255,158,44,.12);color:var(--amber);border:1px solid rgba(255,158,44,.25)}
+.b-r{background:rgba(255,85,85,.12);color:var(--red);border:1px solid rgba(255,85,85,.25)}
+
+/* stat pills */
+.pill{display:inline-flex;align-items:center;padding:5px 13px;border-radius:100px;
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700}
+.pu{background:rgba(0,229,160,.1);color:var(--mint)}
+.pb{background:rgba(91,138,240,.1);color:var(--blue)}
+
+/* big number */
+.bn{font-family:'Space Mono',monospace;font-weight:700;letter-spacing:-.03em;line-height:1}
+
+/* check / cross lists */
+.cl{list-style:none;display:flex;flex-direction:column;gap:0}
+.cl li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border);font-size:15px;color:var(--g1);line-height:1.5}
+.cl li:last-child{border-bottom:none}
+.cl li::before{content:'✓';color:var(--mint);font-weight:700;flex-shrink:0;margin-top:1px;font-size:14px}
+.xl li::before{content:'×';color:var(--red)}
+
+/* metric card */
+.mc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.ml{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--g2);margin-bottom:6px}
+.mv{font-family:'Space Mono',monospace;font-size:clamp(24px,3vw,36px);font-weight:700}
+.ms{font-size:13px;color:var(--g2);margin-top:3px}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}
+.inner{width:100%;max-width:var(--inner-max);min-width:0}
+.card,.mc,.agent{min-width:0}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%}
+.grid-3--center{max-width:780px;margin:0 auto;text-align:left}
+.grid-2x2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ct-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ct-scroll .ct{min-width:320px}
+
+/* chart reveal */
+.chart-wrap{opacity:0;transform:translateY(20px) scale(.98);
+  transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1)}
+.chart-wrap.reveal{opacity:1;transform:translateY(0) scale(1)}
+.chart-wrap canvas{opacity:0;transition:opacity .4s ease .15s}
+.chart-wrap.reveal canvas{opacity:1}
+.count-up{display:inline-block}
+.money{display:inline-flex;align-items:baseline;gap:.15em;white-space:nowrap}
+.money-val{letter-spacing:-.03em}
+.money-cur{font-size:.82em;opacity:.95;flex-shrink:0}
+.mv,.bn,.ct td.va,.ct td.vb,.pill,.roi-row [style*="Space Mono"]{white-space:nowrap}
+
+/* table */
+.ct{width:100%;border-collapse:collapse;font-size:14px}
+.ct th{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--g2);padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.ct th.ha{color:var(--blue)}.ct th.hb{color:var(--mint)}
+.ct td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ct td.r{color:var(--g2);font-size:13px}
+.ct td.va{color:var(--w);font-family:'Space Mono',monospace;font-size:13px}
+.ct td.vb{color:var(--mint);font-family:'Space Mono',monospace;font-size:13px}
+.ct tr:hover td{background:rgba(15,23,42,.03)}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%;position:relative}
+.tl::before{content:'';position:absolute;top:20px;left:12.5%;right:12.5%;height:2px;
+  background:var(--mint);box-shadow:0 0 12px rgba(0,229,160,.5)}
+.ti{display:flex;flex-direction:column;align-items:center;padding:0 10px}
+.td{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1}
+.td.on,.td.off{background:rgba(0,229,160,.15);border:1px solid var(--mint);color:var(--mint);box-shadow:var(--gm)}
+.tlab{font-size:13px;font-family:'Space Mono',monospace;color:var(--g2);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;text-align:center}
+.ttit{font-size:17px;font-weight:700;margin-bottom:6px;text-align:center}
+.ttxt{font-size:15px;color:var(--g2);line-height:1.5;text-align:center}
+
+/* integration */
+.ig{display:grid;grid-template-columns:1fr 80px 1fr;gap:16px;align-items:start;width:100%}
+.ic{display:flex;flex-direction:column;gap:6px}
+.ii{display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  font-size:11.5px;color:var(--g1);line-height:1.4}
+.idot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.icenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.ilogo{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--mint);
+  padding:8px 12px;border:1px solid rgba(0,229,160,.3);border-radius:8px;
+  background:rgba(0,229,160,.05);box-shadow:var(--gm);text-align:center;white-space:nowrap}
+
+/* priorities slide */
+.prio-num{font-family:'Space Mono',monospace;font-weight:700;line-height:1;flex-shrink:0;color:var(--mint);opacity:.35}
+.prio-num--lg{font-size:clamp(52px,5.5vw,72px);opacity:.5}
+.prio-247{font-family:'Space Mono',monospace;font-size:1.45em;font-weight:800;color:var(--blue);letter-spacing:.03em}
+
+/* agents ecosystem */
+.inner.slide-ecosystem{max-width:1100px}
+.agents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-bottom:16px}
+.agent{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+  box-shadow:0 2px 12px rgba(15,23,42,.04);min-width:0}
+.agent:hover{border-color:var(--border-hi);box-shadow:0 4px 20px rgba(15,23,42,.08)}
+.agent--mint{border-color:rgba(0,168,112,.22)}
+.agent--blue{border-color:rgba(61,111,212,.22)}
+.agent-ico{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--mint);
+  text-transform:uppercase;margin-bottom:8px;display:block}
+.agent-ico.blue{color:var(--blue)}
+.agent-tit{font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.2;display:block}
+.agent-txt{font-size:13px;color:var(--g1);line-height:1.5;display:block}
+.privacy-box{padding:16px 20px;border-radius:12px;background:rgba(0,168,112,.08);
+  border:1px solid rgba(0,168,112,.25);box-shadow:var(--gm)}
+.privacy-box .ptit{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;
+  color:var(--mint);text-transform:uppercase;margin-bottom:8px}
+.privacy-box p{font-size:14px;color:var(--g1);line-height:1.55;margin:0}
+
+/* iPad / планшет и узкий ноутбук — прокрутка слайдов, без zoom */
+@media(max-width:1366px){
+  :root{--slide-pad-y:40px;--slide-pad-x:36px;--inner-max:min(920px,calc(100vw - 72px))}
+  #logo{top:max(18px,env(safe-area-inset-top));left:max(20px,env(safe-area-inset-left))}
+  #ctr{bottom:max(18px,env(safe-area-inset-bottom));right:max(20px,env(safe-area-inset-right))}
+  .slide.active{
+    overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    justify-content:flex-start;align-items:center;
+    padding-top:max(52px,env(safe-area-inset-top));
+    padding-bottom:max(56px,env(safe-area-inset-bottom));
+  }
+  .slide-ecosystem.active{padding-top:max(44px,env(safe-area-inset-top));padding-bottom:max(44px,env(safe-area-inset-bottom))}
+  .h1{font-size:clamp(36px,7vw,64px)}
+  .h2{font-size:clamp(28px,5.5vw,48px)}
+  .h3{font-size:clamp(17px,2.8vw,26px)}
+  .mv,.bn,.ct td.va,.ct td.vb,.pill{white-space:normal;word-break:break-word}
+  .ilogo{white-space:normal;text-align:center}
+  .grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-2x2{grid-template-columns:1fr}
+  .g2,.g3,.g4,.slide-s9-grid{grid-template-columns:1fr!important}
+  .ig{grid-template-columns:1fr;gap:12px}
+  .icenter{flex-direction:row;justify-content:center;padding:8px 0}
+  .tl{grid-template-columns:1fr 1fr;gap:20px}
+  .tl::before{display:none}
+  .slide-s1-grid{grid-template-columns:1fr!important;gap:28px!important}
+  .slide-s13-contacts{flex-direction:column;align-items:center;gap:12px!important}
+  .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #wrapCompare{height:200px!important}
+  #wrapRoi{height:130px!important}
+}
+/* ноутбук 1024–1439 (мышь) */
+@media(min-width:1024px) and (max-width:1439px){
+  #bp{left:12px}#bn{right:12px}
+  .slide-s1-grid{gap:40px!important}
+}
+/* планшет портрет 768–1023 */
+@media(min-width:768px) and (max-width:1023px){
+  :root{--inner-max:min(680px,calc(100vw - 64px));--slide-pad-x:32px}
+  #logo{font-size:9px}
+  #ctr{font-size:9px}
+  #bp{left:10px}#bn{right:10px}
+  .nb{width:40px;height:40px}
+}
+/* телефон */
+@media(max-width:767px){
+  :root{--inner-max:100%;--slide-pad-y:28px;--slide-pad-x:max(20px,env(safe-area-inset-left))}
+  .h1{font-size:clamp(30px,9vw,44px)}
+  .h2{font-size:clamp(24px,7vw,36px)}
+  .grid-3,.agents,.tl{grid-template-columns:1fr}
+  .slide-s1-grid{grid-template-columns:1fr!important}
+}
+
+/* ── chat bubbles ── */
+.chat{display:flex;flex-direction:column;gap:8px;width:100%}
+.bub{max-width:86%;padding:9px 14px;border-radius:14px;font-size:14px;line-height:1.45}
+.bub.u{align-self:flex-end;background:rgba(61,111,212,.12);border:1px solid rgba(61,111,212,.25);border-bottom-right-radius:4px}
+.bub.b{align-self:flex-start;background:rgba(0,168,112,.10);border:1px solid rgba(0,168,112,.25);border-bottom-left-radius:4px}
+/* ── packages ── */
+.g4-pkg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;width:100%}
+.pkg{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 18px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.pkg.feat{border-color:rgba(0,168,112,.42);box-shadow:var(--gm)}
+.pkg-name{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--g2)}
+.pkg-price{font-family:'Space Mono',monospace;font-size:clamp(20px,2.4vw,28px);font-weight:700;letter-spacing:-.02em;color:var(--mint);line-height:1}
+.pkg-dlg{font-size:13px;color:var(--w);font-weight:700}
+.pkg-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:1px}
+.pkg-list li{font-size:12px;color:var(--g1);line-height:1.4;display:flex;gap:7px}
+.pkg-list li::before{content:'·';color:var(--mint);font-weight:700;flex-shrink:0}
+.pkg-tok{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--g2);margin-top:auto;padding-top:9px;border-top:1px solid var(--border);line-height:1.4}
+.tokbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%}
+.tokc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;min-width:0}
+.tokc .tn{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--g2)}
+.tokc .tv{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--w);margin-top:3px}
+.tokc .ts{font-size:11px;color:var(--mint);margin-top:2px;font-weight:700}
+.cnote{margin-top:14px;padding:11px 16px;border-radius:9px;background:rgba(255,158,44,.07);border:1px solid rgba(255,158,44,.2);font-size:12.5px;color:var(--amber);line-height:1.45}
+.cnote.mint{background:rgba(0,168,112,.07);border-color:rgba(0,168,112,.22);color:var(--mint)}
+.foot-note{font-size:11px;color:var(--g2);margin-top:10px;line-height:1.45}
+.card-tit{font-size:17px;font-weight:700;margin-bottom:7px;line-height:1.2}
+.card-txt{font-size:13.5px;color:var(--g1);line-height:1.5}
+.step-time{display:inline-flex;align-items:center;padding:4px 11px;border-radius:100px;background:rgba(0,168,112,.1);color:var(--mint);font-family:'Space Mono',monospace;font-size:11px;font-weight:700;margin-top:10px}
+.lvl-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.lvl-row:last-child{border-bottom:none}
+.lvl-row span{color:var(--g2)}
+.lvl-row b{font-family:'Space Mono',monospace;color:var(--w);font-weight:700;font-size:12.5px;text-align:right}
+.roi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;margin-bottom:16px}
+</style>
+
+</head>
+<body>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
+<div id="prog"></div>
+<div id="logo">СМАЙЛБОТ · ВИП-МЕД · 02.06</div>
+<div id="ctr">01 / 12</div>
+
+<button class="nb" id="bp" onclick="go(-1)" aria-label="Назад">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+<button class="nb" id="bn" onclick="go(1)" aria-label="Вперёд">
+  <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+</button>
+
+<!-- S1 TITLE -->
+<section class="slide active" id="s1">
+<div class="inner slide-s1-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center">
+  <div>
+    <div class="ey">Этапы внедрения · дорожная карта по ТЗ</div>
+    <h1 class="h1">Смайл<span class="am">Бот</span></h1>
+    <div class="div"></div>
+    <div class="h3" style="color:var(--g1);font-weight:600;margin-bottom:16px">ИИ-помощник для медицинских клиник</div>
+    <p class="sub" style="max-width:470px">Дорожная карта по финальному ТЗ — три шага, с живыми примерами и расчётом.</p>
+    <p class="mono" style="font-size:12px;color:var(--g2);margin-top:24px;letter-spacing:.03em;line-height:1.5">Подготовлено для ООО «ЦМТ» / «ВИП-МЕД» · Ногинск · сопровождение к ТЗ</p>
+  </div>
+  <div class="g2" style="grid-template-columns:1fr 1fr">
+    <div class="mc gm"><div class="ml">Пациентов</div><div class="mv am">40 100</div></div>
+    <div class="mc"><div class="ml">Врачей</div><div class="mv">70–80</div></div>
+    <div class="mc gb"><div class="ml">Направлений</div><div class="mv ab">15+</div></div>
+    <div class="mc"><div class="ml">Человек / день</div><div class="mv">150–200</div></div>
+  </div>
+</div>
+</section>
+
+<!-- S2 ГЛАВНЫЙ СМЫСЛ -->
+<section class="slide" id="s2">
+<div class="inner">
+  <div class="ey">Главный смысл</div>
+  <h2 class="h2" style="margin-bottom:16px">Почему важна последовательность шагов</h2>
+  <p class="sub" style="max-width:860px;margin-bottom:26px">В ТЗ зафиксирована недозагрузка расписания около 30%. Это не «потерянные пациенты» — это незанятые слоты в текущей базе каждый день. Поэтапное внедрение позволяет закрывать их по мере подключения модулей, не дожидаясь финала.</p>
+  <div class="g2" style="grid-template-columns:.85fr 2.15fr;align-items:stretch;gap:18px">
+    <div class="card gm" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);margin-bottom:8px">Недозагрузка расписания</div>
+      <div class="bn am" style="font-size:clamp(40px,5vw,62px)">~30%</div>
+      <div class="ms" style="margin-top:8px">из 150–200 слотов в день простаивают — потенциал к закрытию по шагам</div>
+    </div>
+    <div class="g3">
+      <div class="card"><div class="card-tit">Польза сразу</div><p class="card-txt">Каждый шаг запускается отдельно и сразу работает — эффект виден, не дожидаясь остальных.</p></div>
+      <div class="card"><div class="card-tit">Меньше риска</div><p class="card-txt">Подключаем по модулю, проверяем на реальных пациентах, идём дальше осознанно.</p></div>
+      <div class="card"><div class="card-tit">Растущий охват</div><p class="card-txt">От типовых вопросов — к записи и интеграции — к возврату базы. Чек растёт вместе с пользой.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- S3 ДОРОЖНАЯ КАРТА -->
+<section class="slide" id="s3">
+<div class="inner">
+  <div class="ey">Дорожная карта</div>
+  <h2 class="h2" style="margin-bottom:12px">Три шага внедрения</h2>
+  <p class="sub" style="max-width:760px;margin-bottom:26px">Каждый шаг полезен сам по себе. Переход к следующему — по готовности.</p>
+  <div class="grid-3">
+    <div class="card gm"><span class="badge b-b">ШАГ 1</span><div class="card-tit" style="margin-top:12px">ИИ-помощник</div><p class="card-txt">Снимаем поток типовых вопросов с администраторов. Старт без интеграции.</p><span class="step-time">2–3 недели</span></div>
+    <div class="card"><span class="badge b-a">ШАГ 2</span><div class="card-tit" style="margin-top:12px">Запись и интеграция</div><p class="card-txt">Подключаем Инфоклинику, запись через мессенджер, напоминания за 24 ч.</p><span class="step-time">6–8 недель</span></div>
+    <div class="card"><span class="badge b-w">ШАГ 3</span><div class="card-tit" style="margin-top:12px">Развитие</div><p class="card-txt">Подбор врача, маршруты «за один визит», возврат пациентов из базы.</p><span class="step-time">по объёму</span></div>
+  </div>
+</div>
+</section>
+
+<!-- S4 ШАГ 1 -->
+<section class="slide" id="s4">
+<div class="inner">
+  <div class="ey">Шаг 1 · ИИ-помощник</div>
+  <h2 class="h2" style="margin-bottom:22px">ИИ-помощник на типовых вопросах</h2>
+  <div class="g2" style="gap:26px;align-items:start">
+    <div class="chat">
+      <div class="bub u">Здравствуйте! Сколько стоит УЗИ брюшной полости?</div>
+      <div class="bub b">Здравствуйте! УЗИ брюшной полости — 2 400 ₽.</div>
+      <div class="bub u">А готовиться как-то надо?</div>
+      <div class="bub b">Да: за 8 часов не есть, накануне убрать газообразующие продукты.</div>
+      <div class="bub u">Можно с ребёнком 6 лет?</div>
+      <div class="bub b">Конечно, деток принимаем. Подсказать свободное время или позвать администратора?</div>
+    </div>
+    <div>
+      <div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--g2);margin-bottom:8px">Что закрывает</div>
+      <ul class="cl">
+        <li>10 типовых вопросов: цены, подготовка, дети, аппаратура</li>
+        <li>База знаний по прайсу, оборудованию и врачам</li>
+        <li>Справочник длительности процедур — основа для расписания</li>
+        <li>Сложные случаи мягко передаёт администратору</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cnote mint">Старт без интеграции с МИС. Работает на стороне бота — запуск за 2–3 недели, не дожидаясь доступа к Инфоклинике.</div>
+</div>
+</section>
+
+<!-- S5 ШАГ 2 -->
+<section class="slide" id="s5">
+<div class="inner">
+  <div class="ey">Шаг 2 · запись и интеграция</div>
+  <h2 class="h2" style="margin-bottom:22px">Запись через мессенджер + интеграция</h2>
+  <div class="g2" style="gap:26px;align-items:start">
+    <div class="chat">
+      <div class="bub u">Хочу записаться к кардиологу на этой неделе</div>
+      <div class="bub b">Есть четверг 14:30 и пятница 11:00 — что удобнее?</div>
+      <div class="bub u">Четверг 14:30</div>
+      <div class="bub b">Записала ✅ За сутки пришлю напоминание с кнопками «приду / отменю».</div>
+      <div class="bub b">За 24 часа: «Напоминаем: завтра 14:30, кардиолог. [Приду] [Отменю]»</div>
+    </div>
+    <div>
+      <div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--g2);margin-bottom:8px">Что подключаем</div>
+      <ul class="cl">
+        <li>Полный контур Инфоклиники: слоты, создание/перенос/отмена записи, запись в карту</li>
+        <li>Запись через мессенджер: заявка → подтверждение администратором</li>
+        <li>Напоминание за 24 ч с кнопками приду/отменю</li>
+        <li>Уведомления врачам о записях, отменах и переносах</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cnote mint">Доступ к API — берём на себя. От клиента — одна подпись на письме вендору.</div>
+</div>
+</section>
+
+<!-- S6 ШАГ 3 -->
+<section class="slide" id="s6">
+<div class="inner">
+  <div class="ey">Шаг 3 · развитие</div>
+  <h2 class="h2" style="margin-bottom:22px">Умные сценарии и возврат базы</h2>
+  <div class="g2" style="gap:26px;align-items:start">
+    <div class="chat">
+      <div class="bub b">Здравствуйте! Вы были у нас в марте — самое время для плановой проверки. Записать к терапевту?</div>
+      <div class="bub u">Болит живот пару дней, к кому идти?</div>
+      <div class="bub b">По описанию подойдёт гастроэнтеролог. Есть завтра 10:00. Сразу добавлю УЗИ — приедете один раз.</div>
+      <div class="bub u">Отлично, давайте</div>
+      <div class="bub b">Готово ✅ Маршрут: УЗИ 9:30 → приём 10:00. Памятку по подготовке отправила.</div>
+    </div>
+    <div>
+      <div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--g2);margin-bottom:8px">Умные сценарии</div>
+      <ul class="cl">
+        <li>Подбор специалиста по жалобе пациента</li>
+        <li>Маршруты «всё за один визит»: УЗИ + анализы + приём</li>
+        <li>Возврат пациентов из базы ~40 000 — волнами раз в квартал</li>
+        <li>Все каналы сразу: MAX + VK + Telegram + виджет на сайте</li>
+        <li>Первичный/повторный, авто-памятки по подготовке</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cnote mint">Подключаем, когда ядро (Шаги 1–2) работает стабильно.</div>
+</div>
+</section>
+
+<!-- S7 ТЕХНИЧЕСКАЯ ДЕТАЛЬ -->
+<section class="slide" id="s7">
+<div class="inner">
+  <div class="ey">Техническая деталь</div>
+  <h2 class="h2" style="margin-bottom:14px">Скорость обновления — на выбор</h2>
+  <p class="sub" style="max-width:860px;margin-bottom:24px">Инфоклиника штатно не поддерживает webhook, поэтому данные обновляются опросом МИС с заданной частотой. Чаще опрос — свежее данные, но выше нагрузка.</p>
+  <div class="g2" style="gap:18px">
+    <div class="card gm">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="card-tit" style="margin:0">Уровень A — Спокойный</div><span class="badge b-b">советуем</span></div>
+      <div class="lvl-row"><span>Синхронизация</span><b>1–2 минуты</b></div>
+      <div class="lvl-row"><span>Свежесть слотов</span><b>до ~1–2 мин</b></div>
+      <div class="lvl-row"><span>Нагрузка на МИС</span><b>низкая</b></div>
+      <div class="lvl-row"><span>Цена</span><b>в базе Шага 2</b></div>
+    </div>
+    <div class="card">
+      <div class="card-tit" style="margin-bottom:6px">Уровень B — Шустрый</div>
+      <div class="lvl-row"><span>Синхронизация</span><b>15–30 секунд</b></div>
+      <div class="lvl-row"><span>Свежесть слотов</span><b>до ~30 сек</b></div>
+      <div class="lvl-row"><span>Нагрузка на МИС</span><b>повышенная</b></div>
+      <div class="lvl-row"><span>Цена</span><b>+60–90к и абонентка</b></div>
+    </div>
+  </div>
+  <div class="cnote">Двойную запись на слот не допускаем при любом уровне — проверяем слот в момент подтверждения. Уровень влияет лишь на скорость возврата освободившегося времени в выдачу.</div>
+</div>
+</section>
+
+<!-- S8 НА СОГЛАСОВАНИЕ -->
+<section class="slide" id="s8">
+<div class="inner">
+  <div class="ey">На согласование</div>
+  <h2 class="h2" style="margin-bottom:14px">Обсудим на встрече</h2>
+  <p class="sub" style="max-width:820px;margin-bottom:24px">Несколько пунктов осознанно оставили открытыми. Старт Шага 1 это не задерживает.</p>
+  <div class="g2" style="gap:16px">
+    <div class="card"><div class="card-tit">Балансировка дня</div><p class="card-txt">Чередование долгих и коротких процедур. Логично в Шаг 2 — уточним, по каким врачам реально нужна.</p></div>
+    <div class="card"><div class="card-tit">Сегментация возврата</div><p class="card-txt">Разная логика по направлениям. Часть Шага 3 — уточним число направлений с отдельной логикой.</p></div>
+    <div class="card"><div class="card-tit">Привязка услуг к кабинетам</div><p class="card-txt">В МИС её нет. Согласуем формат и кто ведёт. Актуально к Шагам 2–3.</p></div>
+    <div class="card"><div class="card-tit">Согласие на ИИ-помощника</div><p class="card-txt">Отдельное согласие пациента на общение с ботом — нужна консультация вашего юриста.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- S9 РАСЧЁТ — РАЗРАБОТКА -->
+<section class="slide" id="s9">
+<div class="inner">
+  <div class="ey">Расчёт · разработка</div>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+    <h2 class="h2" style="margin:0">Ориентировочный расчёт</h2>
+    <span class="badge b-w">цифры предварительные · вилки</span>
+  </div>
+  <table class="ct">
+    <thead><tr><th>Шаг</th><th>Разработка (разово)</th><th>Сроки</th></tr></thead>
+    <tbody>
+      <tr><td class="r">Шаг 1 — ИИ-помощник + справочник</td><td class="va">150 000 – 220 000 ₽</td><td class="va">2–3 недели</td></tr>
+      <tr><td class="r">Шаг 2 — интеграция + запись + напоминания</td><td class="va">350 000 – 550 000 ₽</td><td class="va">6–8 недель</td></tr>
+      <tr><td class="r">Шаг 3 — развитие (по подмодулям)</td><td class="va">от 300 000 ₽</td><td class="va">по объёму</td></tr>
+      <tr><td class="r" style="color:var(--mint);font-weight:700">Итого Шаги 1–2</td><td class="vb">500 000 – 770 000 ₽</td><td class="vb">8–11 недель</td></tr>
+    </tbody>
+  </table>
+  <div class="cnote mint">Разработка — разовая. Ежемесячное обслуживание и стоимость токенов ИИ-модели — на следующем слайде.</div>
+</div>
+</section>
+
+<!-- S10 АБОНЕНТСКОЕ ОБСЛУЖИВАНИЕ — ПАКЕТЫ -->
+<section class="slide" id="s10">
+<div class="inner" style="max-width:1120px">
+  <div class="ey">Абонентское обслуживание</div>
+  <h2 class="h2" style="margin-bottom:6px;font-size:clamp(28px,3.6vw,46px)">Пакеты по объёму диалогов</h2>
+  <p class="sub" style="max-width:880px;margin-bottom:22px">Чем больше диалогов — тем выше пакет. Всё включено: работа ИИ-модели (РФ-контур, 152-ФЗ), хостинг, поддержка и правки.</p>
+  <div class="g4-pkg" style="margin-bottom:18px">
+    <div class="pkg feat">
+      <div class="pkg-name">Старт</div>
+      <div class="pkg-price">от 50 000 ₽<span style="font-size:13px;color:var(--g2)"> /мес</span></div>
+      <div class="pkg-dlg">до 150 диалогов / день</div>
+      <ul class="pkg-list">
+        <li>работа ИИ-модели, хостинг РФ</li>
+        <li>база знаний, поддержка, правки</li>
+      </ul>
+      <div class="pkg-tok">всё включено в пакет</div>
+    </div>
+    <div class="pkg">
+      <div class="pkg-name">Рост</div>
+      <div class="pkg-price">от 90 000 ₽<span style="font-size:13px;color:var(--g2)"> /мес</span></div>
+      <div class="pkg-dlg">до 500 диалогов / день</div>
+      <ul class="pkg-list">
+        <li>всё из «Старт»</li>
+        <li>+ мониторинг, приоритетная поддержка</li>
+      </ul>
+      <div class="pkg-tok">всё включено в пакет</div>
+    </div>
+    <div class="pkg">
+      <div class="pkg-name">Бизнес</div>
+      <div class="pkg-price">от 150 000 ₽<span style="font-size:13px;color:var(--g2)"> /мес</span></div>
+      <div class="pkg-dlg">до 1 000 диалогов / день</div>
+      <ul class="pkg-list">
+        <li>всё из «Рост»</li>
+        <li>+ расширенный SLA, аналитика</li>
+      </ul>
+      <div class="pkg-tok">всё включено в пакет</div>
+    </div>
+    <div class="pkg">
+      <div class="pkg-name">Масштаб</div>
+      <div class="pkg-price">от 300 000 ₽<span style="font-size:13px;color:var(--g2)"> /мес</span></div>
+      <div class="pkg-dlg">до 5 000 диалогов / день</div>
+      <ul class="pkg-list">
+        <li>выделенные мощности</li>
+        <li>индивидуальный расчёт</li>
+      </ul>
+      <div class="pkg-tok">всё включено в пакет</div>
+    </div>
+  </div>
+  <div class="card gm" style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center;padding:16px 22px">
+    <div class="ml" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);margin:0">Сверх пакета</div>
+    <div class="bn am" style="font-size:clamp(26px,3vw,38px)">5 ₽</div>
+    <div class="sub" style="margin:0;font-size:15px">за каждый дополнительный диалог</div>
+  </div>
+  <div class="foot-note">Цены ориентировочные, включают работу ИИ-модели (российский контур, 152-ФЗ), хостинг, поддержку и правки. Точный пакет — по факту объёма диалогов.</div>
+</div>
+</section>
+
+<!-- S11 ОКУПАЕМОСТЬ -->
+<section class="slide" id="s11">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+    <div class="ey" style="margin:0">Окупаемость</div>
+    <span class="badge b-b">оценочно · консервативно</span>
+  </div>
+  <h2 class="h2" style="margin-bottom:14px">Возврат инвестиций</h2>
+  <p class="sub" style="max-width:880px;margin-bottom:22px">Логика: 30% недозагрузки при 150–200 приёмах ≈ 50 свободных слотов в день. Считаем эффект консервативно, при среднем чеке 4 000 ₽ и 22 рабочих днях.</p>
+  <div class="roi-grid">
+    <div class="card"><div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Шаг 1 · разгрузка админов</div><div class="bn ab" style="font-size:clamp(26px,3vw,38px)">~150 000 ₽</div><div class="ms" style="margin-top:6px">в месяц — меньше рутинных звонков, время админов на запись</div></div>
+    <div class="card"><div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Шаг 2 · закрытие слотов</div><div class="bn am" style="font-size:clamp(26px,3vw,38px)">~350 000 ₽</div><div class="ms" style="margin-top:6px">в месяц — ~4 слота/день × 4 000 ₽ × 22 дня</div></div>
+    <div class="card"><div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Шаг 3 · возврат базы</div><div class="bn aa" style="font-size:clamp(26px,3vw,38px)">~300 000 ₽</div><div class="ms" style="margin-top:6px">в месяц — реактиватор спящих волнами из базы ~40 000</div></div>
+  </div>
+  <div class="g2" style="gap:16px">
+    <div class="card gm"><div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Совокупный эффект (Шаги 1–3)</div><div class="bn am" style="font-size:clamp(34px,4.2vw,56px)">≈ 9,6 млн ₽</div><div class="ms" style="margin-top:6px">в год дополнительной выручки</div></div>
+    <div class="card gb"><div class="ml" style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Окупаемость вложений</div><div class="bn ab" style="font-size:clamp(34px,4.2vw,56px)">1–3 месяца</div><div class="ms" style="margin-top:6px">при разработке 500–770к и абонентке — эффект кратно перекрывает вложения</div></div>
+  </div>
+  <div class="foot-note">Цифры оценочные, по нижней границе рынка. Точная модель — открытыми формулами на встрече, после уточнения чеков по направлениям.</div>
+</div>
+</section>
+
+<!-- S12 ЧТО ДАЛЬШЕ -->
+<section class="slide" id="s12">
+<div class="inner">
+  <div class="ey">Что дальше</div>
+  <h2 class="h2" style="margin-bottom:24px">Следующие шаги</h2>
+  <div class="g2" style="gap:14px;margin-bottom:30px">
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start"><div class="prio-num prio-num--lg">1</div><p class="card-txt" style="font-size:15px;align-self:center">Встреча для согласования ТЗ и открытых вопросов — в течение недели</p></div>
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start"><div class="prio-num prio-num--lg">2</div><p class="card-txt" style="font-size:15px;align-self:center">Фиксируем объём Шагов 1–2, уровень скорости и стоимость в приложении к договору</p></div>
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start"><div class="prio-num prio-num--lg">3</div><p class="card-txt" style="font-size:15px;align-self:center">Подписываем договор и письмо вендору на доступ к API (одна подпись)</p></div>
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start"><div class="prio-num prio-num--lg">4</div><p class="card-txt" style="font-size:15px;align-self:center">Запускаем Шаг 1 — параллельно с оформлением доступа для Шага 2</p></div>
+  </div>
+  <div class="card gm slide-s13-contacts" style="display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap">
+    <div>
+      <div class="h3" style="margin-bottom:4px">Александр Джапаридзе</div>
+      <div class="mono" style="font-size:12px;color:var(--g2);letter-spacing:.04em">Основатель · СмайлБот</div>
+    </div>
+    <div class="mono" style="font-size:13px;color:var(--g1);line-height:1.7;text-align:right">
+      <a class="contact-link" href="tel:+79687184420">+7 (968) 718-44-20</a><br>
+      <a class="contact-link" href="mailto:ad@personalbery.online">ad@personalbery.online</a><br>
+      Ногинск, ул. Декабристов, 3 стр. 1
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 1;
+
+function animateCount(el, target, dur){
+  const start = performance.now();
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  function frame(now){
+    const p = Math.min(1, (now - start) / dur);
+    el.textContent = Math.round(target * ease(p)).toLocaleString('ru-RU');
+    if(p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function updateUI(){
+  document.querySelectorAll('.slide').forEach((s, i) => {
+    s.classList.remove('active', 'out');
+    if(i + 1 === cur) s.classList.add('active');
+  });
+  document.getElementById('prog').style.width = ((cur / TOTAL) * 100) + '%';
+  document.getElementById('ctr').textContent =
+    String(cur).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+}
+
+function go(dir){
+  const next = Math.max(1, Math.min(TOTAL, cur + dir));
+  if(next === cur) return;
+  const current = document.getElementById('s' + cur);
+  current.classList.add('out');
+  setTimeout(() => current.classList.remove('out'), 600);
+  cur = next;
+  updateUI();
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); go(1); }
+  if(e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+});
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if(Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+});
+updateUI();
+</script>
+</body>
+</html>
